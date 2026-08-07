@@ -1,14 +1,14 @@
+import { HomeHero } from "@/src/features/public-site/home/components/home-hero";
+import { CaseCardStack } from "@/src/features/public-site/home/components/case-card-stack";
+import { HomeOverview } from "@/src/features/public-site/home/components/home-overview";
+import { homeCaseCards } from "@/src/features/public-site/home/data/case-cards";
+
 export default function PublicHomePage() {
   return (
-    <main className="flex flex-1 items-center justify-center px-6 py-24">
-      <div className="text-center">
-        <p className="text-sm uppercase tracking-[0.3em] text-orange">
-          Public Site
-        </p>
-        <h1 className="mt-4 text-4xl font-semibold text-foreground">
-          KODEKABI Home
-        </h1>
-      </div>
+    <main className="flex-1">
+      <HomeHero />
+      <CaseCardStack cards={homeCaseCards} />
+      <HomeOverview />
     </main>
   );
 }

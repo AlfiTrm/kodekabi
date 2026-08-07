@@ -9,7 +9,7 @@ export default function PublicSiteLayout({
   return (
     <div className="flex min-h-full flex-col bg-background">
       <PublicNavbar />
-      <div className="flex flex-1 flex-col">{children}</div>
+      <div className="flex flex-1 flex-col pt-32 lg:pt-20">{children}</div>
       <PublicFooter />
     </div>
   );

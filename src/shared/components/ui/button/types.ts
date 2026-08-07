@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 export type ButtonSize = "compact" | "default";
 export type ButtonVariant = "outline" | "solid" | "hatch" | "hatch-outline" | "detective";
+export type DetectiveTone = "light" | "orange";
 
 export type ButtonProps = {
   href: string;
@@ -10,6 +11,8 @@ export type ButtonProps = {
   size?: ButtonSize;
   className?: string;
   hoverLabel?: ReactNode;
+  tone?: DetectiveTone;
+  hoverAsset?: ReactNode;
 };
 
 export type VariantButtonProps = {
@@ -22,4 +25,6 @@ export type VariantButtonProps = {
   };
   className: string;
   hoverLabel?: ReactNode;
+  tone?: DetectiveTone;
+  hoverAsset?: ReactNode;
 };

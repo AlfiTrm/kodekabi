@@ -13,7 +13,7 @@ export function PublicNavbar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/6 bg-background/92 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/6 bg-background/92 backdrop-blur-xl">
       <SiteContainer>
         <div className="flex min-h-20 flex-wrap items-center gap-x-4 gap-y-3 py-4 lg:min-h-0 lg:flex-nowrap lg:py-0">
           <Link

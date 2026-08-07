@@ -23,3 +23,16 @@
   opacity: 1;
   transform: translateY(0) rotate(8deg);
 }
+
+.detectiveAsset {
+  opacity: 0;
+  transform: translateY(120%) scale(0.7) rotate(-4deg);
+  transition:
+    opacity 140ms ease-out,
+    transform 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global(.group:hover) .detectiveAsset {
+  opacity: 1;
+  transform: translateY(0) scale(1.2) rotate(-4deg);
+}
