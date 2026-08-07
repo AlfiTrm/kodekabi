@@ -4,24 +4,38 @@
   --background: #0b0c10;
   --foreground: #f5f7fb;
   --orange: #fdbf3b;
+  --orange-shadow: #d88c16;
+  --lens-ring: #5a3b24;
   --red: #f26d6d;
   --purple: #8375e8;
   --green: #5bb56a;
   --surface: #14161d;
+  --surface-elevated: #171b25;
   --surface-muted: #1c1f28;
   --border: rgba(255, 255, 255, 0.08);
+  --border-strong: #2e3446;
+  --button-ink: #0f1118;
+  --panel-underside: #cfd4dd;
+  --panel-underside-edge: #a9b0bc;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-orange: var(--orange);
+  --color-orange-shadow: var(--orange-shadow);
+  --color-lens-ring: var(--lens-ring);
   --color-red: var(--red);
   --color-purple: var(--purple);
   --color-green: var(--green);
   --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-surface-muted: var(--surface-muted);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-button-ink: var(--button-ink);
+  --color-panel-underside: var(--panel-underside);
+  --color-panel-underside-edge: var(--panel-underside-edge);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -34,4 +48,133 @@ html {
 body {
   background-color: var(--background);
   color: var(--foreground);
+}
+
+@keyframes detective-light-flicker {
+  0%,
+  18%,
+  22%,
+  56%,
+  60%,
+  100% {
+    opacity: 1;
+  }
+
+  20%,
+  58% {
+    opacity: 0.45;
+  }
+
+  21%,
+  59% {
+    opacity: 0.82;
+  }
+}
+
+@keyframes beam-startup-flicker {
+  0% {
+    opacity: 0;
+  }
+
+  16% {
+    opacity: 1;
+  }
+
+  28% {
+    opacity: 0.35;
+  }
+
+  42% {
+    opacity: 0.9;
+  }
+
+  54% {
+    opacity: 0.52;
+  }
+
+  72% {
+    opacity: 0.84;
+  }
+
+  100% {
+    opacity: 0.76;
+  }
+}
+
+@keyframes button-flap-lift {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  38% {
+    transform: rotateX(-50deg);
+  }
+
+  100% {
+    transform: rotateX(-36deg);
+  }
+}
+
+.button-cavity-beam {
+  background: linear-gradient(180deg, var(--orange) 0%, transparent 100%);
+  clip-path: polygon(16% 0, 84% 0, 100% 100%, 0 100%);
+  transform-origin: top center;
+}
+
+.button-cavity-beam--white {
+  background: linear-gradient(180deg, var(--foreground) 0%, transparent 100%);
+}
+
+.button-cavity-source {
+  background: var(--orange);
+  border-radius: 999px;
+}
+
+.button-cavity-source--white {
+  background: var(--foreground);
+}
+
+@keyframes button-cavity-flicker {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  1% {
+    opacity: 0.6;
+  }
+
+  2% {
+    opacity: 0.04;
+  }
+
+  3% {
+    opacity: 0.6;
+  }
+
+  4% {
+    opacity: 0.08;
+  }
+
+  5%,
+  78% {
+    opacity: 0.6;
+  }
+
+  80% {
+    opacity: 0.1;
+  }
+
+  82% {
+    opacity: 0.6;
+  }
+
+  84% {
+    opacity: 0.16;
+  }
+
+  86%,
+  94% {
+    opacity: 0.6;
+  }
 }
