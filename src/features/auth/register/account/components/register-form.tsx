@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { Button } from "@/src/shared/components/ui/button";
+import { startPageLoading } from "@/src/shared/components/feedback/page-loader/page-loader";
 import { GoogleIcon } from "../../../_shared/components/google-icon";
 import { useRegisterSession } from "../../_shared/register-session-context";
 
@@ -20,6 +21,7 @@ export function RegisterForm() {
     event.preventDefault();
     if (!canSubmit) return;
     updateDraft({ email: email.trim() });
+    startPageLoading();
     router.push("/register/verify");
   }
 

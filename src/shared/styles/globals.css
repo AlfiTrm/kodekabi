@@ -78,6 +78,15 @@ body {
   overflow-x: hidden;
 }
 
+html[data-kodekabi-entrance="seen"] .first-visit-entrance:not([data-intro-active="true"]) {
+  display: none;
+}
+
+html:is([data-kodekabi-entrance="new"], [data-kodekabi-entrance="playing"])
+  [data-public-navbar-brand] {
+  opacity: 0;
+}
+
 @keyframes hero-copy-in {
   from {
     opacity: 0;
@@ -99,6 +108,30 @@ body {
   to {
     opacity: 1;
     transform: translateX(0) rotate(var(--menu-rotation, 0deg));
+  }
+}
+
+@keyframes footprint-stamp {
+  0%,
+  9% {
+    opacity: 0;
+    transform: translateY(7px) scale(1.12);
+  }
+
+  10% {
+    opacity: 0.18;
+  }
+
+  13%,
+  58% {
+    opacity: 0.82;
+    transform: translateY(0) scale(1);
+  }
+
+  74%,
+  100% {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.98);
   }
 }
 

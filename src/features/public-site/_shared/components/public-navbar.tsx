@@ -32,6 +32,7 @@ export function PublicNavbar() {
         <div className="flex min-h-20 flex-wrap items-center gap-x-4 gap-y-3 py-4 lg:min-h-0 lg:flex-nowrap lg:py-0">
           <Link
             href="/"
+            data-public-navbar-brand
             className="flex shrink-0 items-center transition-opacity duration-200 hover:opacity-90"
             aria-label="KODEKABI Beranda"
           >
@@ -43,14 +44,20 @@ export function PublicNavbar() {
               priority
               className="h-10 w-10 sm:hidden"
             />
-            <Image
-              src="/logo/logo-horizontal.svg"
-              alt="KODEKABI"
-              width={169}
-              height={40}
-              priority
-              className="hidden h-auto w-[150px] sm:block lg:w-[169px]"
-            />
+            <span className="hidden items-center gap-2.5 sm:flex" aria-hidden="true">
+              <Image
+                src="/logo/logo-icon.svg"
+                alt=""
+                width={40}
+                height={40}
+                priority
+                className="size-10 shrink-0"
+              />
+              <span className="origin-left scale-x-90 whitespace-nowrap font-display text-2xl font-semibold leading-none tracking-[0.02em] text-foreground">
+                KOD<span className="inline-block -scale-x-100">E</span>
+                <span className="text-orange">KABI</span>
+              </span>
+            </span>
           </Link>
 
           <div className="ml-auto lg:hidden">
