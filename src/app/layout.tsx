@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
+import { PUBLIC_ENTRANCE_STORAGE_KEY } from "@/src/features/public-site/_shared/constants/entrance";
 import "../shared/styles/globals.css";
+
+const entranceBootstrap = `try{document.documentElement.dataset.kodekabiEntrance=localStorage.getItem('${PUBLIC_ENTRANCE_STORAGE_KEY}')==='true'?'seen':'new'}catch{document.documentElement.dataset.kodekabiEntrance='new'}`;
 
 const clashDisplay = localFont({
   src: [
@@ -32,7 +36,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${clashDisplay.variable} ${jetMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Script
+          id="kodekabi-entrance-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: entranceBootstrap }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
