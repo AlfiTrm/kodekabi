@@ -13,6 +13,8 @@ export type ButtonProps = {
   hoverLabel?: ReactNode;
   tone?: DetectiveTone;
   hoverAsset?: ReactNode;
+  autoPlay?: boolean;
+  disabled?: boolean;
 };
 
 export type VariantButtonProps = {
@@ -27,4 +29,6 @@ export type VariantButtonProps = {
   hoverLabel?: ReactNode;
   tone?: DetectiveTone;
   hoverAsset?: ReactNode;
+  autoPlay?: boolean;
+  disabled?: boolean;
 };

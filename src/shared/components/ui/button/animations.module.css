@@ -11,6 +11,11 @@
   transform: translate(-50%, -8%) rotate(-3deg);
 }
 
+:global(.group[data-autoplay="true"]) .evidenceSlip {
+  opacity: 1;
+  transform: translate(-50%, -8%) rotate(-3deg);
+}
+
 .detectiveLens {
   opacity: 0;
   transform: translateY(120%) rotate(-18deg);
@@ -24,6 +29,11 @@
   transform: translateY(0) rotate(8deg);
 }
 
+:global(.group[data-autoplay="true"]) .detectiveLens {
+  opacity: 1;
+  transform: translateY(0) rotate(8deg);
+}
+
 .detectiveAsset {
   opacity: 0;
   transform: translateY(120%) scale(0.7) rotate(-4deg);
@@ -33,6 +43,11 @@
 }
 
 :global(.group:hover) .detectiveAsset {
+  opacity: 1;
+  transform: translateY(0) scale(1.2) rotate(-4deg);
+}
+
+:global(.group[data-autoplay="true"]) .detectiveAsset {
   opacity: 1;
   transform: translateY(0) scale(1.2) rotate(-4deg);
 }

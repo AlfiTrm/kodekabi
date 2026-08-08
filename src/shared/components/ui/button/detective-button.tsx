@@ -3,13 +3,14 @@ import Link from "next/link";
 import animationStyles from "./animations.module.css";
 import type { VariantButtonProps } from "./types";
 
-export function DetectiveButton({ href, children, sizeClasses, className, tone = "light", hoverAsset }: VariantButtonProps) {
+export function DetectiveButton({ href, children, sizeClasses, className, tone = "light", hoverAsset, autoPlay = false }: VariantButtonProps) {
   const isOrange = tone === "orange";
 
   return (
     <Link
       href={href}
-      className={`group relative inline-flex items-center justify-center overflow-hidden font-semibold transition-colors duration-200 ${isOrange ? "bg-orange text-button-ink group-hover:bg-orange" : "bg-white text-button-ink group-hover:bg-background group-hover:text-foreground"} ${sizeClasses.face} ${className}`.trim()}
+      data-autoplay={autoPlay ? "true" : undefined}
+      className={`group relative inline-flex cursor-pointer items-center justify-center overflow-hidden font-semibold transition-colors duration-200 ${isOrange ? "bg-orange text-button-ink group-hover:bg-orange" : "bg-white text-button-ink group-hover:bg-background group-hover:text-foreground"} ${sizeClasses.face} ${className}`.trim()}
     >
       <span
         aria-hidden="true"

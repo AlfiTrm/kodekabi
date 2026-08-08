@@ -5,6 +5,9 @@
   --foreground: #f5f7fb;
   --orange: #fdbf3b;
   --orange-shadow: #d88c16;
+  --red-shadow: #c85353;
+  --purple-shadow: #6255c2;
+  --green-shadow: #438e51;
   --briefcase-backdrop: #3b261d;
   --case-interior: #1f1513;
   --case-rail: #51362b;
@@ -28,6 +31,9 @@
   --color-foreground: var(--foreground);
   --color-orange: var(--orange);
   --color-orange-shadow: var(--orange-shadow);
+  --color-red-shadow: var(--red-shadow);
+  --color-purple-shadow: var(--purple-shadow);
+  --color-green-shadow: var(--green-shadow);
   --color-briefcase-backdrop: var(--briefcase-backdrop);
   --color-case-interior: var(--case-interior);
   --color-case-rail: var(--case-rail);
@@ -48,6 +54,16 @@
   --font-display: var(--font-clash-display);
   --font-sans: var(--font-jet-mono);
   --font-mono: var(--font-jet-mono);
+}
+
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
 }
 
 html {
@@ -71,6 +87,66 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes mobile-menu-in {
+  from {
+    opacity: 0;
+    transform: translateX(-28px) rotate(-4deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(var(--menu-rotation, 0deg));
+  }
+}
+
+@keyframes verify-question-wiggle {
+  0%,
+  72%,
+  100% {
+    transform: rotate(7deg);
+  }
+
+  75% {
+    transform: rotate(1deg);
+  }
+
+  78% {
+    transform: rotate(12deg);
+  }
+
+  81% {
+    transform: rotate(4deg);
+  }
+
+  84% {
+    transform: rotate(9deg);
+  }
+}
+
+@keyframes verify-envelope-wiggle {
+  0%,
+  72%,
+  100% {
+    transform: rotate(-7deg);
+  }
+
+  75% {
+    transform: rotate(-11deg);
+  }
+
+  78% {
+    transform: rotate(-3deg);
+  }
+
+  81% {
+    transform: rotate(-10deg);
+  }
+
+  84% {
+    transform: rotate(-6deg);
   }
 }
 

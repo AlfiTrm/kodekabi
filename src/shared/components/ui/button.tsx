@@ -33,6 +33,8 @@ export function Button({
   hoverLabel,
   tone = "light",
   hoverAsset,
+  autoPlay = false,
+  disabled = false,
 }: ButtonProps) {
   const variantProps = {
     href,
@@ -42,6 +44,8 @@ export function Button({
     hoverLabel,
     tone,
     hoverAsset,
+    autoPlay,
+    disabled,
   };
 
   switch (variant) {
