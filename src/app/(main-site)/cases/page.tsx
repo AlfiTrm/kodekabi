@@ -1,7 +1,1 @@
-export default function CasesPage() {
-  return (
-    <main className="flex flex-1 items-center justify-center px-6 py-24">
-      <h1 className="text-3xl font-semibold text-foreground">Cases</h1>
-    </main>
-  );
-}
+export { CasesPage as default } from "@/src/features/main-site/cases/containers/cases-page";
