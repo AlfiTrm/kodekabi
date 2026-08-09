@@ -31,6 +31,10 @@ export function Button({
   size = "default",
   className = "",
   hoverLabel,
+  tone = "light",
+  hoverAsset,
+  autoPlay = false,
+  disabled = false,
 }: ButtonProps) {
   const variantProps = {
     href,
@@ -38,6 +42,10 @@ export function Button({
     sizeClasses: sizeClasses[size],
     className,
     hoverLabel,
+    tone,
+    hoverAsset,
+    autoPlay,
+    disabled,
   };
 
   switch (variant) {
