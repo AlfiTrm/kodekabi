@@ -8,15 +8,16 @@ export type AdminFilterOption = {
 };
 
 type AdminFilterSelectProps = {
-  name: string;
+  name?: string;
   label: string;
   value: string;
   options: AdminFilterOption[];
   onChange?: (value: string) => void;
   disabled?: boolean;
+  showLabel?: boolean;
 };
 
-export function AdminFilterSelect({ name, label, value, options, onChange, disabled = false }: AdminFilterSelectProps) {
+export function AdminFilterSelect({ name, label, value, options, onChange, disabled = false, showLabel = true }: AdminFilterSelectProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const selectedOption = options.find((option) => option.value === value) ?? options[0];
@@ -45,7 +46,7 @@ export function AdminFilterSelect({ name, label, value, options, onChange, disab
 
   return (
     <div ref={rootRef} className="relative min-w-40">
-      <input type="hidden" name={name} value={value} readOnly />
+      {name ? <input type="hidden" name={name} value={value} readOnly /> : null}
       <button
         type="button"
         aria-haspopup="listbox"
@@ -54,7 +55,7 @@ export function AdminFilterSelect({ name, label, value, options, onChange, disab
         onClick={() => setOpen((current) => !current)}
         className={`flex h-11 w-full cursor-pointer items-center gap-2 rounded-xl border bg-surface px-4 text-left text-xs outline-none transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-55 ${open ? "border-purple" : "border-border-strong hover:border-foreground/25"}`}
       >
-        <span className="text-foreground/45">{label}:</span>
+        {showLabel ? <span className="text-foreground/45">{label}:</span> : null}
         <strong className="min-w-0 flex-1 truncate font-semibold text-foreground">{selectedOption?.label ?? "Semua"}</strong>
         <svg aria-hidden="true" viewBox="0 0 16 16" className={`size-3.5 shrink-0 fill-none stroke-current text-foreground/45 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
           <path d="m4 6 4 4 4-4" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />

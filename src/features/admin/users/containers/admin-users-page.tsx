@@ -3,7 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import { AdminDataError } from "../../_shared/components/admin-data-error";
 import { AdminPageHeader } from "../../_shared/components/admin-page-header";
+import { AdminTableSkeleton } from "../../_shared/components/admin-table-skeleton";
 import { buildAdminQueryHref } from "../../_shared/utils/admin-query";
 import { ADMIN_ACCESS_COOKIE } from "../../auth/constants/admin-auth";
 import { UserFilters } from "../components/user-filters";
@@ -30,7 +32,7 @@ export function AdminUsersPage(props: AdminUsersPageProps) {
       <div className="mt-7">
         <UserFilters search={props.search} role={props.role} status={props.status} />
       </div>
-      <Suspense key={queryKey} fallback={<UsersTableSkeleton />}>
+      <Suspense key={queryKey} fallback={<AdminTableSkeleton />}>
         <AdminUsersResult {...props} />
       </Suspense>
     </div>
@@ -45,12 +47,7 @@ async function AdminUsersResult({ search, role, status, page }: AdminUsersPagePr
   try {
     result = await getAdminUsers({ search, role, status, page, limit: 10 }, accessToken);
   } catch {
-    return (
-      <section className="mt-5 rounded-2xl border border-red/25 bg-red/8 px-6 py-16 text-center">
-        <h2 className="text-sm font-semibold text-red">Data pengguna gagal dimuat.</h2>
-        <p className="mt-2 text-xs text-foreground/45">Periksa sesi admin atau koneksi API, lalu muat ulang halaman.</p>
-      </section>
-    );
+    return <AdminDataError title="Data pengguna gagal dimuat." description="Periksa sesi admin atau koneksi API, lalu muat ulang halaman." />;
   }
 
   const lastPage = Math.max(1, result.pagination.total_pages);
@@ -60,13 +57,4 @@ async function AdminUsersResult({ search, role, status, page }: AdminUsersPagePr
   }
 
   return <div className="mt-5"><UsersTable users={result.users} pagination={result.pagination} query={{ search, role, status }} /></div>;
-}
-
-function UsersTableSkeleton() {
-  return (
-    <div className="mt-5 animate-pulse overflow-hidden rounded-2xl border border-border bg-surface">
-      <div className="h-12 border-b border-border bg-surface-muted/40" />
-      {Array.from({ length: 7 }, (_, index) => <div key={index} className="h-16 border-b border-border last:border-0" />)}
-    </div>
-  );
 }

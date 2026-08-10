@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import { AdminIcon } from "./admin-icon";
+import { AdminRouteLoader } from "./admin-route-loader";
 import { adminNavigation } from "../data/navigation";
 
 type AdminShellProps = {
@@ -18,6 +19,7 @@ export function AdminShell({ children }: AdminShellProps) {
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
+      <AdminRouteLoader />
       <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-surface px-4 md:hidden">
         <Link href="/admin" className="flex items-center gap-2" aria-label="Admin dashboard">
           <Image src="/logo/logo-icon.svg" alt="" width={32} height={32} className="size-8" />

@@ -23,17 +23,19 @@ export type ServerApiResult<TResponse> = {
 export async function serverApiWithMeta<TResponse, TBody = never>(path: string, options: ServerApiOptions<TBody> = {}): Promise<ServerApiResult<TResponse>> {
   const { body, headers, timeoutMs = 10_000, ...requestInit } = options;
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const isMultipart = body instanceof FormData;
+  const requestBody = body === undefined ? undefined : isMultipart ? body : JSON.stringify(body);
 
   let response: Response;
 
   try {
     response = await fetch(`${serverEnv.apiBaseUrl}${normalizedPath}`, {
       ...requestInit,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: requestBody,
       cache: "no-store",
       headers: {
         Accept: "application/json",
-        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+        ...(body === undefined || isMultipart ? {} : { "Content-Type": "application/json" }),
         ...headers,
       },
       signal: AbortSignal.timeout(timeoutMs),
