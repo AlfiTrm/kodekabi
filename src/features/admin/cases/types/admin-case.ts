@@ -190,3 +190,104 @@ export type AdminCaseEvidencesResponse = {
   total: number;
   evidences: AdminCaseEvidence[] | null;
 };
+
+export type AdminQuestionType = "mcq" | "open_ended" | "confidence_slider" | "claim_classification";
+
+export type AdminQuestionEvidenceOption = {
+  case_evidence_id: string;
+  code: string;
+  label: string;
+  template_type: string;
+  sort_order: number;
+};
+
+export type AdminCaseQuestion = {
+  case_question_id: string;
+  case_version_id: string;
+  code: string;
+  question_type: AdminQuestionType;
+  question_text: string;
+  scoring_weight: number;
+  is_required: boolean;
+  sort_order: number;
+  related_evidences: AdminQuestionEvidenceOption[] | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminCaseQuestionsResponse = {
+  case_id: string;
+  case_version_id: string;
+  total: number;
+  questions: AdminCaseQuestion[] | null;
+};
+
+export type AdminQuestionEvidenceOptionsResponse = {
+  case_id: string;
+  case_version_id: string;
+  total: number;
+  evidences: AdminQuestionEvidenceOption[] | null;
+};
+
+export type CreateAdminQuestionResponse = {
+  question: AdminCaseQuestion & Record<string, unknown>;
+};
+
+export type CreateAdminQuestionActionState = {
+  error: string | null;
+};
+
+export type QuestionMcqOptionDraft = {
+  option_code: string;
+  option_text: string;
+  is_correct: boolean;
+};
+
+export type AdminQuestionEvidenceReference = {
+  case_question_evidence_reference_id: string;
+  case_question_id: string;
+  case_evidence_id: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminQuestionDetail = {
+  case_question_id: string;
+  case_version_id: string;
+  question_type: AdminQuestionType;
+  question_text: string;
+  explanation?: string;
+  scoring_weight: number;
+  is_required: boolean;
+  sort_order: number;
+  evidence_references: AdminQuestionEvidenceReference[] | null;
+  options?: Array<QuestionMcqOptionDraft & Record<string, unknown>>;
+  expected_key_points?: string;
+  minimum_keywords?: string[];
+  evaluation_rubric?: string;
+  max_score?: number;
+  min_value?: number;
+  max_value?: number;
+  snap_interval?: number;
+  default_value?: number;
+  label_low?: string;
+  label_high?: string;
+  show_warning_on_large_change?: boolean;
+  taxonomy_tags?: string[];
+  correct_answer?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminQuestionDetailResponse = {
+  question_type: AdminQuestionType;
+  mcq?: AdminQuestionDetail;
+  open_ended?: AdminQuestionDetail;
+  confidence_slider?: AdminQuestionDetail;
+  claim_classification?: AdminQuestionDetail;
+};
+
+export type DeleteAdminQuestionResponse = { case_question_id: string };
+export type DeleteAdminQuestionActionState = { error: string | null };
+export type UpdateAdminQuestionActionState = { error: string | null };

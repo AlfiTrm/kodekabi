@@ -1,7 +1,7 @@
 import "server-only";
 
 import { serverApi } from "@/src/shared/services/api/server-api";
-import type { AdminCaseDetailResponse, AdminCaseEvidenceDetail, AdminCaseEvidenceDetailResponse, AdminCaseEvidencesResponse, AdminCaseLookups, AdminCasesQuery, AdminCasesResponse, CreateAdminCaseResponse, CreateAdminEvidenceResponse, DeleteAdminCaseResponse, DeleteAdminEvidenceResponse, EvidenceTemplateType } from "../types/admin-case";
+import type { AdminCaseDetailResponse, AdminCaseEvidenceDetail, AdminCaseEvidenceDetailResponse, AdminCaseEvidencesResponse, AdminCaseLookups, AdminCaseQuestionsResponse, AdminCasesQuery, AdminCasesResponse, AdminQuestionDetailResponse, AdminQuestionEvidenceOptionsResponse, AdminQuestionType, CreateAdminCaseResponse, CreateAdminEvidenceResponse, CreateAdminQuestionResponse, DeleteAdminCaseResponse, DeleteAdminEvidenceResponse, DeleteAdminQuestionResponse, EvidenceTemplateType } from "../types/admin-case";
 
 export async function getAdminCases(query: AdminCasesQuery, accessToken: string) {
   const searchParams = new URLSearchParams({
@@ -153,6 +153,72 @@ export async function getAdminCaseEvidences(caseId: string, accessToken: string)
     ...result,
     evidences: Array.isArray(result.evidences) ? result.evidences : [],
   };
+}
+
+export async function getAdminCaseQuestions(caseId: string, accessToken: string) {
+  const result = await serverApi<AdminCaseQuestionsResponse>(`/admin/cases/${encodeURIComponent(caseId)}/questions`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  return { ...result, questions: Array.isArray(result.questions) ? result.questions : [] };
+}
+
+export async function getAdminQuestionEvidenceOptions(caseId: string, accessToken: string) {
+  const result = await serverApi<AdminQuestionEvidenceOptionsResponse>(`/admin/cases/${encodeURIComponent(caseId)}/evidence-options`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  return { ...result, evidences: Array.isArray(result.evidences) ? result.evidences : [] };
+}
+
+const questionEndpointSegments: Record<AdminQuestionType, string> = {
+  mcq: "mcq",
+  open_ended: "open-ended",
+  confidence_slider: "confidence-slider",
+  claim_classification: "claim-classification",
+};
+
+export function createAdminCaseQuestion(
+  caseId: string,
+  versionId: string,
+  questionType: AdminQuestionType,
+  payload: Record<string, unknown>,
+  accessToken: string,
+) {
+  return serverApi<CreateAdminQuestionResponse, Record<string, unknown>>(
+    `/admin/cases/${encodeURIComponent(caseId)}/versions/${encodeURIComponent(versionId)}/questions/${questionEndpointSegments[questionType]}`,
+    {
+      method: "POST",
+      body: payload,
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  );
+}
+
+export async function getAdminCaseQuestionDetail(caseId: string, versionId: string, questionId: string, accessToken: string) {
+  const result = await serverApi<AdminQuestionDetailResponse>(
+    `/admin/cases/${encodeURIComponent(caseId)}/versions/${encodeURIComponent(versionId)}/questions/${encodeURIComponent(questionId)}`,
+    { method: "GET", headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  const question = result[result.question_type];
+  if (!question) throw new Error("Question detail payload is incomplete.");
+  return { question_type: result.question_type, question: { ...question, evidence_references: Array.isArray(question.evidence_references) ? question.evidence_references : [] } };
+}
+
+export function updateAdminCaseQuestion(caseId: string, versionId: string, questionId: string, questionType: AdminQuestionType, payload: Record<string, unknown>, accessToken: string) {
+  return serverApi<CreateAdminQuestionResponse, Record<string, unknown>>(
+    `/admin/cases/${encodeURIComponent(caseId)}/versions/${encodeURIComponent(versionId)}/questions/${encodeURIComponent(questionId)}/${questionEndpointSegments[questionType]}`,
+    { method: "PATCH", body: payload, headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+}
+
+export function deleteAdminCaseQuestion(caseId: string, versionId: string, questionId: string, accessToken: string) {
+  return serverApi<DeleteAdminQuestionResponse>(
+    `/admin/cases/${encodeURIComponent(caseId)}/versions/${encodeURIComponent(versionId)}/questions/${encodeURIComponent(questionId)}`,
+    { method: "DELETE", headers: { Authorization: `Bearer ${accessToken}` } },
+  );
 }
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

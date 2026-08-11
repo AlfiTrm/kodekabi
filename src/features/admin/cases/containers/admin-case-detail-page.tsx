@@ -8,14 +8,16 @@ import { ADMIN_ACCESS_COOKIE } from "../../auth/constants/admin-auth";
 import { CaseDetailActions } from "../components/case-detail-actions";
 import { CaseDetailSummary } from "../components/case-detail-summary";
 import { CaseEvidenceTable } from "../components/case-evidence-table";
-import { getAdminCaseDetail, getAdminCaseEvidences, resolveAdminCaseId } from "../services/admin-cases-service";
+import { CaseQuestionsTable } from "../components/case-questions-table";
+import { getAdminCaseDetail, getAdminCaseEvidences, getAdminCaseQuestions, resolveAdminCaseId } from "../services/admin-cases-service";
 
 type AdminCaseDetailPageProps = {
   slug: string;
   caseIdHint?: string;
+  activeTab?: "evidence" | "questions";
 };
 
-export async function AdminCaseDetailPage({ slug, caseIdHint }: AdminCaseDetailPageProps) {
+export async function AdminCaseDetailPage({ slug, caseIdHint, activeTab = "evidence" }: AdminCaseDetailPageProps) {
   const accessToken = (await cookies()).get(ADMIN_ACCESS_COOKIE)?.value;
   if (!accessToken) return null;
 
@@ -31,9 +33,10 @@ export async function AdminCaseDetailPage({ slug, caseIdHint }: AdminCaseDetailP
     return <CaseDetailFailure />;
   }
 
-  const [detailResult, evidencesResult] = await Promise.allSettled([
+  const [detailResult, evidencesResult, questionsResult] = await Promise.allSettled([
     getAdminCaseDetail(caseId, accessToken),
     getAdminCaseEvidences(caseId, accessToken),
+    getAdminCaseQuestions(caseId, accessToken),
   ]);
 
   if (detailResult.status === "rejected") {
@@ -48,6 +51,10 @@ export async function AdminCaseDetailPage({ slug, caseIdHint }: AdminCaseDetailP
   const evidenceFailed = evidencesResult.status === "rejected";
   const evidences = evidenceFailed ? detailResult.value.evidences : evidencesResult.value.evidences;
   const evidenceTotal = evidenceFailed ? evidences.length : evidencesResult.value.total;
+  const questionsFailed = questionsResult.status === "rejected";
+  const questions = questionsFailed ? [] : questionsResult.value.questions;
+  const questionTotal = questionsFailed ? 0 : questionsResult.value.total;
+  const detailBaseHref = `/admin/cases/${encodeURIComponent(caseItem.slug)}?caseId=${encodeURIComponent(caseItem.case_id)}`;
 
   return (
     <div className="mx-auto w-full max-w-[1500px] px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
@@ -61,13 +68,13 @@ export async function AdminCaseDetailPage({ slug, caseIdHint }: AdminCaseDetailP
       <CaseDetailSummary caseItem={caseItem} />
 
       <nav id="workspace" className="mt-6 flex gap-2 overflow-x-auto border-b border-border text-xs" aria-label="Bagian detail case">
-        <span className="shrink-0 border-b-2 border-purple px-5 py-3 font-semibold text-foreground">Evidence</span>
-        <button type="button" disabled className="shrink-0 cursor-not-allowed px-5 py-3 text-foreground/40">Questions</button>
+        <Link href={`${detailBaseHref}&tab=evidence#workspace`} aria-current={activeTab === "evidence" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "evidence" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Evidence</Link>
+        <Link href={`${detailBaseHref}&tab=questions#workspace`} aria-current={activeTab === "questions" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "questions" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Questions</Link>
         <button type="button" disabled className="shrink-0 cursor-not-allowed px-5 py-3 text-foreground/40">Chatbot Config</button>
         <button type="button" disabled className="flex shrink-0 cursor-not-allowed items-center gap-2 px-5 py-3 text-foreground/30">Scoring &amp; Outcome <span className="rounded-lg bg-red/12 px-2 py-1 font-mono text-[8px] text-red">LOCKED</span></button>
       </nav>
 
-      <CaseEvidenceTable evidences={evidences} total={evidenceTotal} caseItem={caseItem} failed={evidenceFailed} />
+      {activeTab === "questions" ? <CaseQuestionsTable questions={questions} total={questionTotal} caseItem={caseItem} failed={questionsFailed} /> : <CaseEvidenceTable evidences={evidences} total={evidenceTotal} caseItem={caseItem} failed={evidenceFailed} />}
     </div>
   );
 }

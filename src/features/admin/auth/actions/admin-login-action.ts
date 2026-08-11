@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { ApiError } from "@/src/shared/services/api/api-error";
 import {
   ADMIN_ACCESS_COOKIE,
+  ADMIN_ACCESS_DURATION_SECONDS,
   ADMIN_OTP_DURATION_SECONDS,
   ADMIN_OTP_EMAIL_COOKIE,
   ADMIN_OTP_EXPIRES_COOKIE,
@@ -74,7 +75,7 @@ export async function adminLoginAction(_state: AdminLoginActionState, formData: 
 
       cookieStore.set(ADMIN_ACCESS_COOKIE, token, {
         httpOnly: true,
-        maxAge: result.expires_in ?? 60 * 60,
+        maxAge: result.expires_in ?? ADMIN_ACCESS_DURATION_SECONDS,
         path: "/",
         sameSite: "lax",
         secure,

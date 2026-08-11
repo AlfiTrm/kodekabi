@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { ApiError } from "@/src/shared/services/api/api-error";
-import { ADMIN_ACCESS_COOKIE, ADMIN_OTP_EMAIL_COOKIE, ADMIN_OTP_EXPIRES_COOKIE, ADMIN_OTP_SESSION_COOKIE, ADMIN_REFRESH_COOKIE } from "../constants/admin-auth";
+import { ADMIN_ACCESS_COOKIE, ADMIN_ACCESS_DURATION_SECONDS, ADMIN_OTP_EMAIL_COOKIE, ADMIN_OTP_EXPIRES_COOKIE, ADMIN_OTP_SESSION_COOKIE, ADMIN_REFRESH_COOKIE } from "../constants/admin-auth";
 import { verifyAdminOtp } from "../services/admin-auth-service";
 import type { AdminVerifyActionState } from "../types/admin-auth";
 import { isAdminAccessToken } from "../utils/admin-token";
@@ -36,7 +36,7 @@ export async function adminVerifyAction(_state: AdminVerifyActionState, formData
     const secure = process.env.NODE_ENV === "production";
     cookieStore.set(ADMIN_ACCESS_COOKIE, result.token, {
       httpOnly: true,
-      maxAge: result.expires_in ?? 60 * 60,
+      maxAge: result.expires_in ?? ADMIN_ACCESS_DURATION_SECONDS,
       path: "/",
       sameSite: "lax",
       secure,

@@ -8,13 +8,14 @@ export const metadata: Metadata = {
 
 type AdminCaseDetailRouteProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ caseId?: string | string[] }>;
+  searchParams: Promise<{ caseId?: string | string[]; tab?: string | string[] }>;
 };
 
 export default async function AdminCaseDetailRoute({ params, searchParams }: AdminCaseDetailRouteProps) {
   const { slug } = await params;
   const query = await searchParams;
   const caseId = typeof query.caseId === "string" ? query.caseId : undefined;
+  const activeTab = query.tab === "questions" ? "questions" : "evidence";
 
-  return <AdminCaseDetailPage slug={slug} caseIdHint={caseId} />;
+  return <AdminCaseDetailPage slug={slug} caseIdHint={caseId} activeTab={activeTab} />;
 }
