@@ -91,6 +91,28 @@ export type DeleteAdminCaseActionState = {
   error: string | null;
 };
 
+export type AdminCasePublishRequirement = {
+  key: string;
+  label: string;
+  required?: number;
+  actual?: number;
+  is_met: boolean;
+};
+
+export type PublishAdminCaseResponse = {
+  case_id: string;
+  case_version_id: string;
+  status: "published" | string;
+  published_at: string;
+  requirements: AdminCasePublishRequirement[];
+};
+
+export type PublishAdminCaseActionState = {
+  error: string | null;
+  success: string | null;
+  requirements: AdminCasePublishRequirement[];
+};
+
 export type EvidenceTemplateType =
   | "social_post"
   | "article"

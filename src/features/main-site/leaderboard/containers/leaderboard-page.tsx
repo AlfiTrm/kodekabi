@@ -4,9 +4,8 @@ import { useState } from "react";
 
 import { SiteContainer } from "@/src/shared/components/layout/site-container";
 
+import { LeaderboardBoard } from "../components/leaderboard-board";
 import { LeaderboardFilter } from "../components/leaderboard-filter";
-import { LeaderboardList } from "../components/leaderboard-list";
-import { LeaderboardPodium } from "../components/leaderboard-podium";
 import { currentUserEntry, podiumEntries, rankedEntries } from "../data/leaderboard";
 import type { LeaderboardScope } from "../types/leaderboard";
 
@@ -28,8 +27,7 @@ export function LeaderboardPage() {
           </div>
 
           <section className="mt-16 sm:mt-20" aria-label={`Peringkat ${scope}`}>
-            <LeaderboardPodium entries={podiumEntries} />
-            <LeaderboardList entries={rankedEntries} currentUser={currentUserEntry} />
+            <LeaderboardBoard podiumEntries={podiumEntries} rankedEntries={rankedEntries} currentUser={currentUserEntry} />
           </section>
 
           <p className="mt-7 text-center text-[9px] text-foreground/30 sm:text-[10px]">Naik 99 peringkat lagi untuk masuk podium. Gas!</p>
@@ -38,4 +36,3 @@ export function LeaderboardPage() {
     </main>
   );
 }
-

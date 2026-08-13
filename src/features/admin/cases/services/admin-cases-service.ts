@@ -1,7 +1,7 @@
 import "server-only";
 
 import { serverApi } from "@/src/shared/services/api/server-api";
-import type { AdminCaseDetailResponse, AdminCaseEvidenceDetail, AdminCaseEvidenceDetailResponse, AdminCaseEvidencesResponse, AdminCaseLookups, AdminCaseQuestionsResponse, AdminCasesQuery, AdminCasesResponse, AdminQuestionDetailResponse, AdminQuestionEvidenceOptionsResponse, AdminQuestionType, CreateAdminCaseResponse, CreateAdminEvidenceResponse, CreateAdminQuestionResponse, DeleteAdminCaseResponse, DeleteAdminEvidenceResponse, DeleteAdminQuestionResponse, EvidenceTemplateType } from "../types/admin-case";
+import type { AdminCaseDetailResponse, AdminCaseEvidenceDetail, AdminCaseEvidenceDetailResponse, AdminCaseEvidencesResponse, AdminCaseLookups, AdminCaseQuestionsResponse, AdminCasesQuery, AdminCasesResponse, AdminQuestionDetailResponse, AdminQuestionEvidenceOptionsResponse, AdminQuestionType, CreateAdminCaseResponse, CreateAdminEvidenceResponse, CreateAdminQuestionResponse, DeleteAdminCaseResponse, DeleteAdminEvidenceResponse, DeleteAdminQuestionResponse, EvidenceTemplateType, PublishAdminCaseResponse } from "../types/admin-case";
 
 export async function getAdminCases(query: AdminCasesQuery, accessToken: string) {
   const searchParams = new URLSearchParams({
@@ -57,6 +57,13 @@ export function createAdminCase(payload: FormData, accessToken: string) {
 export function deleteAdminCase(caseId: string, accessToken: string) {
   return serverApi<DeleteAdminCaseResponse>(`/admin/cases/${encodeURIComponent(caseId)}`, {
     method: "DELETE",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export function publishAdminCase(caseId: string, accessToken: string) {
+  return serverApi<PublishAdminCaseResponse>(`/admin/cases/${encodeURIComponent(caseId)}/publish`, {
+    method: "PATCH",
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 }

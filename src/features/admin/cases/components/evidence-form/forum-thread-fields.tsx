@@ -29,7 +29,7 @@ export function ForumThreadFields({ disabled, initial }: { disabled: boolean; in
             </div>
             <div className="grid gap-4 md:grid-cols-[1fr_1fr_0.65fr]">
               <EvidenceField label="Author Name" value={post.author_name} onChange={(event) => updatePost(post.id, { author_name: event.target.value })} required disabled={disabled} />
-              <EvidenceDateTimeField label="Timestamp" min="2020-01-01T00:00:00" max="2100-12-31T23:59:59" step={1} value={post.timestamp} onChange={(event) => updatePost(post.id, { timestamp: event.target.value })} required disabled={disabled} />
+              <EvidenceDateTimeField label="Timestamp" min="2020-01-01T00:00:00" max="2100-12-31T23:59:59" value={post.timestamp} onValueChange={(timestamp) => updatePost(post.id, { timestamp })} required disabled={disabled} />
               <EvidenceField label="Upvote Count" type="number" min={0} value={post.upvote_count} onChange={(event) => updatePost(post.id, { upvote_count: Number(event.target.value) })} required disabled={disabled} />
             </div>
             <div className="mt-4"><EvidenceTextarea label="Post Text" value={post.text} onChange={(event) => updatePost(post.id, { text: event.target.value })} required disabled={disabled} /></div>

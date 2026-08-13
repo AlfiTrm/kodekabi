@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { SiteContainer } from "@/src/shared/components/layout/site-container";
 import { Button } from "@/src/shared/components/ui/button";
 
@@ -27,13 +29,23 @@ export function HowToPage() {
             <StepCopy step="Langkah 01" tone="red" title={<>Pilih kasus harianmu.</>}>
               Setiap hari Kota Nusa punya masalah baru: unggahan viral mencurigakan, chatbot yang terlalu percaya diri, sampai statistik yang diplintir. Pilih satu, baca briefing-nya, lalu pasang tekanan awalmu.
             </StepCopy>
-            <div className="rotate-[2deg] rounded-2xl bg-red p-6 text-button-ink shadow-[8px_9px_0_var(--red-shadow)] sm:p-8">
-              <div className="flex items-center justify-between font-mono text-[9px] font-semibold">
-                <span>DAILY CASE · SOCIAL POST</span><span className="rounded-full bg-black/15 px-3 py-1">2× XP</span>
+            <div className="relative isolate rotate-[2deg] overflow-hidden rounded-2xl bg-red p-6 text-foreground shadow-[8px_9px_0_var(--red-shadow)] sm:p-8">
+              <Image
+                src="/thumbnail/thumbnail-red.webp"
+                alt=""
+                fill
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                className="pointer-events-none z-0 object-cover"
+              />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-red/40" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between font-mono text-[9px] font-semibold">
+                  <span>DAILY CASE · SOCIAL POST</span><span className="rounded-full bg-black/20 px-3 py-1">2× XP</span>
+                </div>
+                <h2 className="mt-5 max-w-sm font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.035em] sm:text-5xl">Vitamin<br />ajaib viral.</h2>
+                <p className="mt-4 max-w-md text-xs leading-5 text-foreground/70">Klaim “sembuh 27 penyakit” menyebar 3.100× dalam sehari.</p>
+                <span className="mt-7 inline-flex rounded-full bg-white px-5 py-2 text-xs font-bold text-button-ink">▶ Main</span>
               </div>
-              <h2 className="mt-5 max-w-sm font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.035em] sm:text-5xl">Vitamin<br />ajaib viral.</h2>
-              <p className="mt-4 max-w-md text-xs leading-5 text-button-ink/70">Klaim “sembuh 27 penyakit” menyebar 3.100× dalam sehari.</p>
-              <span className="mt-7 inline-flex rounded-full bg-white px-5 py-2 text-xs font-bold">▶ Main</span>
             </div>
           </section>
 

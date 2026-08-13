@@ -57,7 +57,7 @@ export function ChatTranscriptFields({ disabled, initial }: { disabled: boolean;
                 <span className="mb-2 block text-xs font-semibold">Sender</span>
                 <AdminFilterSelect label="Sender" value={message.sender} options={senderOptions} onChange={(value) => updateMessage(message.id, { sender: value })} disabled={disabled || participants.length === 0} showLabel={false} />
               </div>
-              <EvidenceDateTimeField label="Timestamp" min="2020-01-01T00:00:00" max="2100-12-31T23:59:59" step={1} value={message.timestamp} onChange={(event) => updateMessage(message.id, { timestamp: event.target.value })} required disabled={disabled} />
+              <EvidenceDateTimeField label="Timestamp" min="2020-01-01T00:00:00" max="2100-12-31T23:59:59" value={message.timestamp} onValueChange={(timestamp) => updateMessage(message.id, { timestamp })} required disabled={disabled} />
             </div>
             <div className="mt-4"><EvidenceTextarea label="Message Text" value={message.text} onChange={(event) => updateMessage(message.id, { text: event.target.value })} required disabled={disabled} /></div>
           </article>

@@ -2,9 +2,9 @@
 
 import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 
+import { AdminDateInput } from "../../../_shared/components/admin-date-input";
 import { credibilityTagOptions } from "../../data/evidence-form-options";
 import { useCredibilityTags } from "../../hooks/use-credibility-tags";
-import { useDateTimePicker } from "../../hooks/use-date-time-picker";
 import { useEvidenceImageUpload } from "../../hooks/use-evidence-image-upload";
 
 export const evidenceInputClass = "h-11 w-full rounded-xl border border-border-strong bg-background px-3 text-xs text-foreground outline-none transition-colors placeholder:text-foreground/30 focus:border-purple disabled:cursor-not-allowed disabled:opacity-55";
@@ -21,30 +21,17 @@ export function EvidenceField({ label, className = "", containerClassName = "", 
   );
 }
 
-type EvidenceDateTimeFieldProps = Omit<EvidenceFieldProps, "type">;
-
-function EvidencePickerField({ type, label, className = "", containerClassName = "", disabled, ...props }: EvidenceDateTimeFieldProps & { type: "date" | "datetime-local" }) {
-  const { inputRef, openPicker } = useDateTimePicker();
-
-  return (
-    <label className={`block text-xs font-semibold ${containerClassName}`}>
-      {label}
-      <span className="relative mt-2 block">
-        <input ref={inputRef} type={type} disabled={disabled} {...props} className={`${evidenceInputClass} pr-12 [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:hidden ${className}`} />
-        <button type="button" onClick={openPicker} disabled={disabled} aria-label={`Pilih ${label.toLocaleLowerCase()}`} className="absolute inset-y-0 right-1 grid w-10 cursor-pointer place-items-center rounded-lg text-foreground/45 transition-colors hover:bg-white/5 hover:text-purple disabled:cursor-not-allowed disabled:opacity-40">
-          <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 fill-none stroke-current" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M7 3v3m10-3v3M4 9h16" /><rect x="4" y="5" width="16" height="16" rx="2" /><path d="M8 13h3m2 0h3m-8 4h3" /></svg>
-        </button>
-      </span>
-    </label>
-  );
-}
+type EvidenceDateTimeFieldProps = Pick<EvidenceFieldProps, "label" | "name" | "defaultValue" | "disabled" | "required" | "min" | "max" | "containerClassName"> & {
+  value?: string;
+  onValueChange?: (value: string) => void;
+};
 
 export function EvidenceDateTimeField(props: EvidenceDateTimeFieldProps) {
-  return <EvidencePickerField {...props} type="datetime-local" />;
+  return <AdminDateInput {...props} defaultValue={String(props.defaultValue ?? "")} min={props.min ? String(props.min).slice(0, 10) : undefined} max={props.max ? String(props.max).slice(0, 10) : undefined} includeTime />;
 }
 
 export function EvidenceDateField(props: EvidenceDateTimeFieldProps) {
-  return <EvidencePickerField {...props} type="date" />;
+  return <AdminDateInput {...props} defaultValue={String(props.defaultValue ?? "")} min={props.min ? String(props.min) : undefined} max={props.max ? String(props.max) : undefined} />;
 }
 
 type EvidenceTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string; containerClassName?: string };
