@@ -11,9 +11,11 @@ type LeaderboardBoardProps = {
 export function LeaderboardBoard({ podiumEntries, rankedEntries, currentUser }: LeaderboardBoardProps) {
   return (
     <div className="space-y-8 sm:space-y-10">
-      <section aria-label="Tiga peringkat teratas">
-        <LeaderboardPodium entries={podiumEntries} />
-      </section>
+      {podiumEntries.length > 0 ? (
+        <section aria-label="Tiga peringkat teratas">
+          <LeaderboardPodium entries={podiumEntries} />
+        </section>
+      ) : null}
 
       <section aria-label="Peringkat keseluruhan">
         <LeaderboardList entries={rankedEntries} currentUser={currentUser} />

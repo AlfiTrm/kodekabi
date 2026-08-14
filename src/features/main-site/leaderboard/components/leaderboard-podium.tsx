@@ -16,6 +16,7 @@ export function LeaderboardPodium({ entries }: LeaderboardPodiumProps) {
     <div className="grid grid-cols-3 items-end gap-1 sm:gap-3">
       {entries.map((entry) => {
         const style = podiumStyles[entry.rank as keyof typeof podiumStyles];
+        if (!style) return null;
         return (
           <article key={entry.rank} className={`flex min-w-0 flex-col items-center ${style.order}`}>
             <div className="relative flex flex-col items-center">

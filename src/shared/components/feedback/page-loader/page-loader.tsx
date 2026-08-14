@@ -21,11 +21,13 @@ export function startPageLoading() {
 
 type PageLoaderProps = {
   label: string;
+  ignoreSamePathNavigation?: boolean;
 };
 
-export function PageLoader({ label }: PageLoaderProps) {
+export function PageLoader({ label, ignoreSamePathNavigation = false }: PageLoaderProps) {
   const pathname = usePathname();
   const overlayRef = useRef<HTMLDivElement>(null);
+  const pathnameRef = useRef(pathname);
   const initialRenderRef = useRef(true);
   const shownAtRef = useRef(0);
   const showTimerRef = useRef<number | null>(null);
@@ -33,6 +35,8 @@ export function PageLoader({ label }: PageLoaderProps) {
   const safetyTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
+    pathnameRef.current = pathname;
+
     const overlay = overlayRef.current;
     if (!overlay) return undefined;
 
@@ -99,12 +103,17 @@ export function PageLoader({ label }: PageLoaderProps) {
       const destination = new URL(anchor.href, window.location.href);
       if (destination.origin !== window.location.origin) return;
       if (destination.pathname === window.location.pathname && destination.search === window.location.search) return;
+      if (ignoreSamePathNavigation && destination.pathname === window.location.pathname) return;
 
       showLoader();
     }
 
     const handleProgrammaticNavigation = () => showLoader();
-    const handleHistoryNavigation = () => showLoader(0);
+    const handleHistoryNavigation = () => {
+      const destinationPathname = window.location.pathname;
+      if (ignoreSamePathNavigation && destinationPathname === pathnameRef.current) return;
+      showLoader(0);
+    };
 
     document.addEventListener("click", handleDocumentClick, true);
     window.addEventListener(PAGE_LOADING_EVENT, handleProgrammaticNavigation);
@@ -118,7 +127,7 @@ export function PageLoader({ label }: PageLoaderProps) {
       if (hideTimerRef.current !== null) window.clearTimeout(hideTimerRef.current);
       if (safetyTimerRef.current !== null) window.clearTimeout(safetyTimerRef.current);
     };
-  }, []);
+  }, [ignoreSamePathNavigation]);
 
   return (
     <div
