@@ -35,8 +35,22 @@ export async function getUserShopItem(itemId: string, accessToken: string) {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
+  const apiRelatedItems = Array.isArray(result.related_items) ? result.related_items : [];
+  if (apiRelatedItems.length > 0) {
+    return {
+      ...result,
+      related_items: apiRelatedItems.filter((item) => item.item_id !== result.item.item_id),
+    };
+  }
+
+  const category = result.item.category_code === "avatar" ? "avatar" : "all";
+  const catalog = await getUserShopItems({ category, page: 1, limit: 12 }, accessToken).catch(() => null);
+  const fallbackRelatedItems = catalog?.items
+    .filter((item) => item.item_id !== result.item.item_id && item.category_code === result.item.category_code)
+    .slice(0, 8) ?? [];
+
   return {
     ...result,
-    related_items: Array.isArray(result.related_items) ? result.related_items : [],
+    related_items: fallbackRelatedItems,
   };
 }

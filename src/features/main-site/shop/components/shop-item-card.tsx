@@ -5,7 +5,7 @@ import { getTrustedImageUrl } from "../../_shared/utils/remote-media";
 import type { ShopItem } from "../types/shop";
 import { ShopItemActionButton } from "./shop-item-action-button";
 
-export function ShopItemCard({ item, priority = false }: { item: ShopItem; priority?: boolean }) {
+export function ShopItemCard({ item, priority = false, coinBalance }: { item: ShopItem; priority?: boolean; coinBalance?: number }) {
   const imageUrl = getTrustedImageUrl(item.image_url) ?? "/mascot/mascot-jacket.webp";
 
   return (
@@ -23,7 +23,7 @@ export function ShopItemCard({ item, priority = false }: { item: ShopItem; prior
             <span className="size-3 rounded-full bg-orange shadow-[inset_0_-2px_0_var(--orange-shadow)]" aria-hidden="true" />
             {item.price_coin === 0 ? "Gratis" : `${item.price_coin.toLocaleString("id-ID")} Koin`}
           </span>
-          <ShopItemActionButton initialItem={item} />
+          <ShopItemActionButton initialItem={item} coinBalance={coinBalance} />
         </div>
       </div>
     </article>
