@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 type ModalProps = {
   children: ReactNode;
@@ -29,7 +30,7 @@ export function Modal({ children, labelledBy, onClose, className = "", overlayCl
     };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto p-4 backdrop-blur-sm ${overlayClassName}`} onMouseDown={onClose}>
       <div
         ref={dialogRef}
@@ -42,6 +43,7 @@ export function Modal({ children, labelledBy, onClose, className = "", overlayCl
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

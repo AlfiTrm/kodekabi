@@ -15,5 +15,5 @@ export default async function ShopRoute({ searchParams }: ShopRouteProps) {
   const category: ShopCategoryFilter = requestedCategory === "avatar" ? "avatar" : "all";
   const requestedPage = Number.parseInt(valueOf(params.page, "1"), 10);
 
-  return <ShopPage category={category} page={Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1} />;
+  return <ShopPage category={category} search={valueOf(params.search, "").slice(0, 100)} page={Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1} />;
 }

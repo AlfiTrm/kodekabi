@@ -12,6 +12,8 @@ export function useShopItemMutation(initialItem: ShopItem) {
   const [item, setItem] = useState(initialItem);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [purchaseConfirmationOpen, setPurchaseConfirmationOpen] = useState(false);
+  const [purchaseSuccessOpen, setPurchaseSuccessOpen] = useState(false);
 
   function run(kind: "purchase" | "equip") {
     setPending(true);
@@ -24,6 +26,10 @@ export function useShopItemMutation(initialItem: ShopItem) {
 
       if (result.success) {
         setItem(result.data.item);
+        if (kind === "purchase") {
+          setPurchaseConfirmationOpen(false);
+          setPurchaseSuccessOpen(true);
+        }
         router.refresh();
       } else {
         setMessage(result.message);
@@ -37,6 +43,20 @@ export function useShopItemMutation(initialItem: ShopItem) {
     item,
     pending,
     message,
+    purchaseConfirmationOpen,
+    openPurchaseConfirmation: () => {
+      setMessage(null);
+      setPurchaseConfirmationOpen(true);
+    },
+    closePurchaseConfirmation: () => {
+      if (!pending) setPurchaseConfirmationOpen(false);
+    },
+    purchaseSuccessOpen,
+    closePurchaseSuccess: () => setPurchaseSuccessOpen(false),
+    finishPurchase: () => {
+      setPurchaseSuccessOpen(false);
+      router.push("/shop");
+    },
     purchase: () => run("purchase"),
     equip: () => run("equip"),
   };
