@@ -8,12 +8,33 @@ import { ADMIN_ACCESS_COOKIE } from "../../auth/constants/admin-auth";
 import { ItemTabs } from "../components/item-tabs";
 import { ItemsTable } from "../components/items-table";
 import { RedeemItemsTable } from "../components/redeem-items-table";
+import { RedeemCodesTable } from "../components/redeem-codes-table";
+import { getAdminRedeemCodes } from "../services/admin-redeem-codes-service";
 import { getAdminRedeemItems } from "../services/admin-redeem-items-service";
 import { getAdminItems } from "../services/admin-items-service";
 
-export async function AdminItemsPage({ page, tab = "items" }: { page: number; tab?: "items" | "redeem" }) {
+export async function AdminItemsPage({ page, tab = "items" }: { page: number; tab?: "items" | "redeem" | "codes" }) {
   const accessToken = (await cookies()).get(ADMIN_ACCESS_COOKIE)?.value;
   if (!accessToken) redirect("/admin/login");
+
+  if (tab === "codes") {
+    let codesResult: Awaited<ReturnType<typeof getAdminRedeemCodes>> | null = null;
+    try {
+      codesResult = await getAdminRedeemCodes({ page, limit: 10 }, accessToken);
+    } catch {
+      codesResult = null;
+    }
+
+    if (codesResult && codesResult.pagination.total_pages > 0 && page > codesResult.pagination.total_pages) redirect(`/admin/shop?tab=codes&page=${codesResult.pagination.total_pages}`);
+
+    return (
+      <div className="mx-auto w-full max-w-[1500px] px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
+        <AdminPageHeader title="Kode Redeem" description="Kelola stok kode unik untuk penukaran reward pemain." action={<Link href="/admin/shop/codes/upload" className="grid h-11 place-items-center rounded-full bg-white px-6 text-xs font-semibold text-button-ink transition-colors hover:bg-purple hover:text-white">+ Upload Batch Baru</Link>} />
+        <div className="mt-6"><ItemTabs active={tab} /></div>
+        <div className="mt-5">{codesResult ? <RedeemCodesTable redeemCodes={codesResult.redeemCodes} pagination={codesResult.pagination} /> : <AdminDataError title="Kode redeem gagal dimuat." description="Navigasi toko tetap tersedia. Periksa sesi admin atau koneksi API, lalu muat ulang daftar kode." />}</div>
+      </div>
+    );
+  }
 
   let result: Awaited<ReturnType<typeof getAdminItems>> | Awaited<ReturnType<typeof getAdminRedeemItems>> | null = null;
   try {
