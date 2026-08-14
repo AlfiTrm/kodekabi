@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 
-import { LeaderboardList } from "@/src/features/main-site/leaderboard/components/leaderboard-list";
-import { LeaderboardPodium } from "@/src/features/main-site/leaderboard/components/leaderboard-podium";
+import { LeaderboardBoard } from "@/src/features/main-site/leaderboard/components/leaderboard-board";
 import { podiumEntries, rankedEntries } from "@/src/features/main-site/leaderboard/data/leaderboard";
 import type { LeaderboardEntry } from "@/src/features/main-site/leaderboard/types/leaderboard";
 import { SiteContainer } from "@/src/shared/components/layout/site-container";
@@ -37,8 +36,7 @@ export function PublicLeaderboardPage() {
           </header>
 
           <section className="mt-14 sm:mt-18" aria-label={`Peringkat ${period}`}>
-            <LeaderboardPodium entries={podiumEntries} />
-            <LeaderboardList entries={publicEntries} />
+            <LeaderboardBoard podiumEntries={podiumEntries} rankedEntries={publicEntries} />
           </section>
 
           <aside className="mt-7 flex flex-col gap-5 rounded-2xl bg-purple px-6 py-6 text-white sm:flex-row sm:items-center sm:justify-between sm:px-8">

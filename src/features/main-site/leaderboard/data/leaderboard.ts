@@ -15,11 +15,10 @@ export const rankedEntries: LeaderboardEntry[] = [
 
 export const currentUserEntry: LeaderboardEntry = {
   rank: 102,
-  username: "nadia_audit",
-  initial: "N",
+  username: "alya_audit",
+  initial: "A",
   level: 7,
   points: 1420,
   tone: "purple",
   currentUser: true,
 };
-

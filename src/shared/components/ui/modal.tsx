@@ -7,9 +7,10 @@ type ModalProps = {
   labelledBy: string;
   onClose: () => void;
   className?: string;
+  overlayClassName?: string;
 };
 
-export function Modal({ children, labelledBy, onClose, className = "" }: ModalProps) {
+export function Modal({ children, labelledBy, onClose, className = "", overlayClassName = "bg-background/90" }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export function Modal({ children, labelledBy, onClose, className = "" }: ModalPr
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-background/90 p-4 backdrop-blur-sm" onMouseDown={onClose}>
+    <div className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto p-4 backdrop-blur-sm ${overlayClassName}`} onMouseDown={onClose}>
       <div
         ref={dialogRef}
         role="dialog"
@@ -44,4 +45,3 @@ export function Modal({ children, labelledBy, onClose, className = "" }: ModalPr
     </div>
   );
 }
-

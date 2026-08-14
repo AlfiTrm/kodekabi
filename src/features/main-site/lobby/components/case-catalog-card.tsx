@@ -1,31 +1,29 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import type { LobbyCase } from "../types/lobby-case";
+import { getTrustedImageUrl } from "../../_shared/utils/remote-media";
+import type { UserCase } from "../../cases/types/case";
 
-const toneClasses: Record<LobbyCase["tone"], string> = {
-  blue: "border-blue bg-blue",
-  green: "border-green bg-green",
-  orange: "border-orange-shadow bg-orange-shadow",
-  locked: "border-dashed border-border-strong bg-surface text-foreground/35",
-};
+const tones = ["bg-blue", "bg-green", "bg-orange-shadow", "bg-purple"];
 
-type CaseCatalogCardProps = {
-  item: LobbyCase;
-};
-
-export function CaseCatalogCard({ item }: CaseCatalogCardProps) {
+export function CaseCatalogCard({ item, index }: { item: UserCase; index: number }) {
+  const locked = item.access_status === "locked";
+  const thumbnail = getTrustedImageUrl(item.thumbnail_url);
+  const classes = `group relative flex min-h-52 overflow-hidden rounded-2xl border border-white/8 p-5 ${locked ? "cursor-not-allowed border-dashed opacity-55" : "transition-transform duration-200 hover:-translate-y-1"} ${tones[index % tones.length]}`;
   const content = (
     <>
-      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-button-ink/60">{item.eyebrow}</p>
-      <h3 className={`mt-3 font-display text-xl font-bold uppercase leading-[0.92] tracking-[-0.035em] ${item.locked ? "text-foreground/35" : "text-white"}`}>{item.title}</h3>
-      <span className={`mt-auto w-fit rounded-full px-2.5 py-1 text-[8px] font-bold ${item.locked ? "bg-surface-muted text-foreground/40" : "bg-white text-button-ink"}`}>
-        {item.locked ? "🔒 LV 8" : `+${item.xp} XP`}
-      </span>
+      {thumbnail ? <Image src={thumbnail} alt="" fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover" /> : null}
+      <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/35 to-background/10" />
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col">
+        <p className="font-mono text-[8px] uppercase tracking-[0.12em] text-white/65">{item.difficulty_level} · {item.estimated_duration_minutes} mnt</p>
+        <h3 className="mt-auto line-clamp-2 font-display text-xl font-bold uppercase leading-[0.95] tracking-[-0.03em] text-white">{item.title}</h3>
+        <span className="mt-3 w-fit rounded-full bg-background/80 px-2.5 py-1 text-[8px] font-bold text-white">
+          {locked ? item.locked_reason || `LV ${item.minimum_level}` : item.progress_status === "new" ? "BARU" : "TERSEDIA"}
+        </span>
+      </div>
     </>
   );
 
-  const classes = `flex min-h-48 flex-col rounded-2xl border p-5 transition-transform duration-200 ${toneClasses[item.tone]} ${item.locked ? "cursor-not-allowed" : "hover:-translate-y-1"}`;
-
-  if (item.locked) return <article className={classes}>{content}</article>;
+  if (locked) return <article className={classes}>{content}</article>;
   return <Link href="/cases" className={classes}>{content}</Link>;
 }

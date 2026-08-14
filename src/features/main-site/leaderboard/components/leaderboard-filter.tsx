@@ -1,27 +1,16 @@
 import { FilterChip } from "@/src/shared/components/ui/filter-chip";
 
-import type { LeaderboardScope } from "../types/leaderboard";
+const scopes = ["Minggu ini", "Teman"];
 
-const scopes: Array<{ label: string; value: LeaderboardScope }> = [
-  { label: "Minggu ini", value: "weekly" },
-  { label: "Teman", value: "friends" },
-  { label: "Global", value: "global" },
-];
-
-type LeaderboardFilterProps = {
-  value: LeaderboardScope;
-  onChange: (value: LeaderboardScope) => void;
-};
-
-export function LeaderboardFilter({ value, onChange }: LeaderboardFilterProps) {
+export function LeaderboardFilter() {
   return (
     <div className="flex flex-wrap gap-2" aria-label="Cakupan peringkat">
       {scopes.map((scope) => (
-        <FilterChip key={scope.value} selected={value === scope.value} onClick={() => onChange(scope.value)}>
-          {scope.label}
+        <FilterChip key={scope} disabled className="cursor-not-allowed opacity-40" title="Cakupan ini belum tersedia">
+          {scope}
         </FilterChip>
       ))}
+      <FilterChip selected>Global</FilterChip>
     </div>
   );
 }
-

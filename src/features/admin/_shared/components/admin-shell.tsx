@@ -5,7 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
+import { LogoutConfirmModal } from "@/src/shared/components/ui/logout-confirm-modal";
+
+import { adminLogoutAction } from "../../auth/actions/admin-logout-action";
 import { AdminIcon } from "./admin-icon";
+import { AdminRouteLoader } from "./admin-route-loader";
 import { adminNavigation } from "../data/navigation";
 
 type AdminShellProps = {
@@ -15,9 +19,11 @@ type AdminShellProps = {
 export function AdminShell({ children }: AdminShellProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
+      <AdminRouteLoader />
       <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-surface px-4 md:hidden">
         <Link href="/admin" className="flex items-center gap-2" aria-label="Admin dashboard">
           <Image src="/logo/logo-icon.svg" alt="" width={32} height={32} className="size-8" />
@@ -50,12 +56,20 @@ export function AdminShell({ children }: AdminShellProps) {
         <div className="mt-auto border-t border-border pt-5">
           <div className="flex items-center gap-3 px-2">
             <Image src="/mascot/mascot-detective.webp" alt="Admin Raka" width={38} height={38} className="size-9 rounded-lg bg-purple/15 object-contain" />
-            <span className="min-w-0"><strong className="block truncate text-xs">Raka S.</strong><Link href="/admin/login" className="block text-[9px] text-foreground/35 hover:text-red">Logout</Link></span>
+            <span className="min-w-0"><strong className="block truncate text-xs">Raka S.</strong><button type="button" onClick={() => { setMenuOpen(false); setLoggingOut(true); }} className="block cursor-pointer text-[9px] text-foreground/35 transition-colors hover:text-red">Logout</button></span>
           </div>
         </div>
       </aside>
 
       <main className="min-h-dvh pt-16 md:ml-64 md:pt-0">{children}</main>
+
+      {loggingOut ? (
+        <LogoutConfirmModal
+          action={adminLogoutAction}
+          description="Apakah Anda yakin ingin keluar dari panel admin? Sesi Anda akan diakhiri."
+          onClose={() => setLoggingOut(false)}
+        />
+      ) : null}
     </div>
   );
 }

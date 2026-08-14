@@ -1,4 +1,4 @@
-type AdminIconName = "dashboard" | "users" | "cases" | "shop" | "moderation" | "config" | "leaderboard" | "audit" | "reports" | "search" | "menu" | "close" | "view" | "edit";
+type AdminIconName = "dashboard" | "users" | "cases" | "shop" | "moderation" | "config" | "leaderboard" | "audit" | "reports" | "search" | "menu" | "close" | "view" | "edit" | "delete";
 
 type AdminIconProps = {
   name: AdminIconName;
@@ -20,6 +20,7 @@ const paths: Record<AdminIconName, ReactNode> = {
   close: <><path d="m6 6 12 12M18 6 6 18" /></>,
   view: <><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12" /><circle cx="12" cy="12" r="2.5" /></>,
   edit: <><path d="m4 20 4.5-1 10-10-3.5-3.5-10 10zM13.5 6.5l3.5 3.5" /></>,
+  delete: <><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6" /></>,
 };
 
 export function AdminIcon({ name, className = "size-5" }: AdminIconProps) {

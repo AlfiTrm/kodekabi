@@ -8,10 +8,22 @@ import { useEffect, useState } from "react";
 import { SiteContainer } from "@/src/shared/components/layout/site-container";
 
 import { mainNavigationItems } from "../data/navigation";
+import { getTrustedImageUrl } from "../utils/remote-media";
+import type { LobbyLevel, LobbyProfile } from "../../lobby/types/lobby";
 
-export function MainNavbar() {
+type MainNavbarProps = {
+  profile?: LobbyProfile;
+  level?: LobbyLevel;
+};
+
+export function MainNavbar({ profile, level }: MainNavbarProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const avatarUrl = getTrustedImageUrl(profile?.avatar_url) ?? "/mascot/mascot-jacket.webp";
+  const progress = Math.min(100, Math.max(0, level?.progress_percent ?? 0));
+  const currentLevel = level?.current_level ?? 1;
+  const currentXp = level?.current_xp ?? 0;
+  const nextLevelXp = level?.next_level_xp ?? 0;
 
   useEffect(() => {
     function updateNavbar() {
@@ -40,7 +52,7 @@ export function MainNavbar() {
           <nav aria-label="Navigasi utama" className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <ul className="flex w-max items-center gap-1 sm:gap-2">
               {mainNavigationItems.map((item) => {
-                const active = pathname === item.href;
+                const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
                   <li key={item.label}>
                     <Link
@@ -62,7 +74,7 @@ export function MainNavbar() {
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <div className="hidden h-9 items-center gap-2 rounded-full border border-white/10 bg-surface/75 px-3 text-[10px] font-bold shadow-lg sm:flex">
               <span className="size-4 rounded-full bg-orange shadow-[inset_0_-2px_0_var(--orange-shadow)]" aria-hidden="true" />
-              <span>1.240</span>
+              <span>{(profile?.coin_balance ?? 0).toLocaleString("id-ID")}</span>
               <span className="flex size-4 items-center justify-center rounded-full bg-green text-[11px] text-background" aria-hidden="true">+</span>
             </div>
 
@@ -73,7 +85,7 @@ export function MainNavbar() {
                 className="flex h-9 items-center gap-1.5 rounded-full border border-purple/20 bg-purple/15 px-3 text-[10px] font-bold text-purple transition-colors hover:bg-purple/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
               >
                 <span className="text-[8px] uppercase tracking-[0.12em] text-foreground/50">Lv</span>
-                <span>7</span>
+                <span>{currentLevel}</span>
               </button>
 
               <div
@@ -84,28 +96,27 @@ export function MainNavbar() {
                 <div className="flex items-end justify-between gap-3">
                   <div>
                     <p className="text-[9px] uppercase tracking-[0.14em] text-foreground/45">Level pemain</p>
-                    <p className="mt-1 font-display text-xl font-semibold text-foreground">Auditor Lv. 7</p>
+                    <p className="mt-1 font-display text-xl font-semibold text-foreground">{level?.title || profile?.title || "Auditor Baru"}</p>
                   </div>
-                  <span className="text-[10px] font-bold text-purple">62%</span>
+                  <span className="text-[10px] font-bold text-purple">{Math.round(progress)}%</span>
                 </div>
                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-foreground/10">
-                  <span className="block h-full w-[62%] rounded-full bg-purple" />
+                  <span className="block h-full rounded-full bg-purple" style={{ width: `${progress}%` }} />
                 </div>
                 <div className="mt-2 flex justify-between text-[9px] text-foreground/50">
-                  <span>1.480 XP</span>
-                  <span>2.000 XP</span>
+                  <span>{currentXp.toLocaleString("id-ID")} XP</span>
+                  <span>{nextLevelXp.toLocaleString("id-ID")} XP</span>
                 </div>
                 <p className="mt-3 border-t border-white/8 pt-3 text-[9px] leading-relaxed text-foreground/55">
-                  520 XP lagi untuk membuka hadiah level berikutnya.
+                  {(level?.remaining_xp ?? 0).toLocaleString("id-ID")} XP lagi menuju level {level?.next_level ?? currentLevel + 1}.
                 </p>
               </div>
             </div>
 
             <Link href="/profile" className="relative block rounded-full" aria-label="Buka profil">
-              <span className="flex size-10 items-end justify-center overflow-hidden rounded-full border-2 border-foreground/70 bg-surface-elevated">
-                <Image src="/mascot/mascot-jacket.webp" alt="" width={48} height={48} className="h-10 w-auto object-contain" />
+              <span className="flex size-10 items-end justify-center overflow-hidden rounded-full bg-surface-elevated">
+                <Image src={avatarUrl} alt="" width={48} height={48} className="h-10 w-auto object-contain" />
               </span>
-              <span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-background bg-green" aria-label="Online" />
             </Link>
           </div>
         </div>

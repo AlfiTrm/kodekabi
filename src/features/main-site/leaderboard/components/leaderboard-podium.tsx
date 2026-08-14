@@ -16,6 +16,7 @@ export function LeaderboardPodium({ entries }: LeaderboardPodiumProps) {
     <div className="grid grid-cols-3 items-end gap-1 sm:gap-3">
       {entries.map((entry) => {
         const style = podiumStyles[entry.rank as keyof typeof podiumStyles];
+        if (!style) return null;
         return (
           <article key={entry.rank} className={`flex min-w-0 flex-col items-center ${style.order}`}>
             <div className="relative flex flex-col items-center">
@@ -23,7 +24,7 @@ export function LeaderboardPodium({ entries }: LeaderboardPodiumProps) {
               <AuditorAvatar entry={entry} large />
               <p className="mt-2 max-w-full truncate text-[9px] font-bold text-foreground sm:text-xs">{entry.username}</p>
             </div>
-            <div className={`mt-3 flex w-full flex-col items-center rounded-t-3xl px-2 pt-6 text-button-ink ${style.height} ${style.color}`}>
+            <div className={`mt-3 flex w-full flex-col items-center rounded-3xl px-2 pt-6 text-button-ink shadow-[0_18px_45px_rgba(0,0,0,0.2)] ${style.height} ${style.color}`}>
               <strong className="font-display text-4xl font-bold text-white sm:text-6xl">{entry.rank}</strong>
               <span className="mt-2 font-mono text-[9px] sm:text-xs">{entry.points.toLocaleString("id-ID")} PTS</span>
             </div>
@@ -33,4 +34,3 @@ export function LeaderboardPodium({ entries }: LeaderboardPodiumProps) {
     </div>
   );
 }
-

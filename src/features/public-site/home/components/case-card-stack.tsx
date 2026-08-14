@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, type CSSProperties, type PointerEvent } from "react";
 
 import type { CaseCard } from "../data/case-cards";
@@ -59,9 +60,11 @@ function CaseCardView({ card }: { card: CaseCard }) {
         } as CSSProperties
       }
     >
+      <Image src={card.thumbnail} alt="" fill sizes="(max-width: 640px) 190px, (max-width: 900px) 230px, 358px" className="pointer-events-none z-0 object-cover" />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 opacity-20 [background:repeating-radial-gradient(circle_at_50%_0,transparent_0_13px,var(--foreground)_14px_16px,transparent_17px_28px)]"
+        className="pointer-events-none absolute inset-0 z-[1] opacity-40"
+        style={{ backgroundColor: toneAccent[card.tone] }}
       />
       <div className="relative z-10 text-foreground">
         <div className="flex items-start justify-between gap-3">
