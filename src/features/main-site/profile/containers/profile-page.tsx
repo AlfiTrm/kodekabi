@@ -17,7 +17,7 @@ import { TitleCollection } from "../components/title-collection";
 import { profileTitles } from "../data/profile";
 
 export function ProfilePage() {
-  const [nickname, setNickname] = useState("NadiaJeli");
+  const [nickname, setNickname] = useState("AlyaJeli");
   const [selectedTitle, setSelectedTitle] = useState(profileTitles[1]);
   const [editing, setEditing] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);

@@ -38,7 +38,6 @@ export async function getAdminRedeemItems(query: AdminRedeemItemsQuery, accessTo
 
 export async function getAdminRedeemTypes(accessToken: string) {
   const result = await serverApi<AdminRedeemTypesWireResponse>("/admin/redeem-types", { method: "GET", headers: { Authorization: `Bearer ${accessToken}` } });
-  // console.log("[admin/redeem-types] response:", result);
   return normalizeAdminRedeemTypes(result);
 }
 

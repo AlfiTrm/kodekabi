@@ -21,7 +21,7 @@ type RegisterSessionValue = {
 const initialDraft: RegisterDraft = {
   email: "",
   detectiveId: "kabitektif",
-  nickname: "NadiaJelita",
+  nickname: "AlyaJelita",
   cosmetics: defaultEquippedCosmetics,
 };
 

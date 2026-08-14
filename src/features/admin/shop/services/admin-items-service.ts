@@ -2,6 +2,7 @@ import "server-only";
 
 import { serverApi } from "@/src/shared/services/api/server-api";
 import type {
+  AdminItemCategoriesResponse,
   AdminItemCategory,
   AdminItemDetailResponse,
   AdminItemMutationResponse,
@@ -9,7 +10,6 @@ import type {
   AdminItemsResponse,
   DeleteAdminItemResponse,
 } from "../types/admin-item";
-import { uniqueItemCategories } from "../data/item-category-utils";
 
 export async function getAdminItems(query: AdminItemsQuery, accessToken: string) {
   const searchParams = new URLSearchParams({
@@ -37,24 +37,15 @@ export async function getAdminItems(query: AdminItemsQuery, accessToken: string)
   };
 }
 
-export async function getAdminItemCategoriesFromCatalog(accessToken: string): Promise<AdminItemCategory[]> {
-  const catalog = await getAdminItems({ page: 1, limit: 10 }, accessToken);
-  let categories = uniqueItemCategories(catalog.items);
+export async function getAdminItemCategories(accessToken: string): Promise<AdminItemCategory[]> {
+  const result = await serverApi<AdminItemCategoriesResponse>("/users/item-categories", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
-  // Until the backend exposes a category lookup, use the documented avatar
-  // catalog query when the unfiltered endpoint returns no rows.
-  if (categories.length === 0) {
-    const avatarCatalog = await getAdminItems({
-      page: 1,
-      limit: 10,
-      categoryCode: "avatar",
-      status: "active",
-      isVisible: true,
-    }, accessToken);
-    categories = uniqueItemCategories(avatarCatalog.items);
-  }
-
-  return categories;
+  return Array.isArray(result.categories)
+    ? [...result.categories].sort((left, right) => left.name.localeCompare(right.name, "id-ID"))
+    : [];
 }
 
 export function getAdminItemDetail(itemId: string, accessToken: string) {

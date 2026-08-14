@@ -3,8 +3,8 @@ export type AdminItemCategory = {
   code: string;
   name: string;
   description: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type AdminItem = {
@@ -42,6 +42,10 @@ export type AdminItemsResponse = {
   pagination: AdminItemsPagination;
 };
 
+export type AdminItemCategoriesResponse = {
+  categories: AdminItemCategory[] | null;
+};
+
 export type AdminItemDetailResponse = { item: AdminItem };
 export type AdminItemMutationResponse = { item: AdminItem };
 export type DeleteAdminItemResponse = { item_id: string };
@@ -49,4 +53,3 @@ export type DeleteAdminItemResponse = { item_id: string };
 export type AdminItemActionState = {
   error: string | null;
 };
-

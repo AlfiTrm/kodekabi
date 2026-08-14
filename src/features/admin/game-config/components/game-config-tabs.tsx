@@ -3,7 +3,6 @@ import Link from "next/link";
 const tabs = [
   { label: "General", value: "general", href: "/admin/config", enabled: true },
   { label: "XP & Level", value: "xp-level", href: "/admin/config?tab=xp-level", enabled: true },
-  { label: "Daily Case", value: "daily-case", href: "#", enabled: false },
   { label: "AI Config", value: "ai-config", href: "#", enabled: false },
 ] as const;
 

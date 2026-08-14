@@ -36,4 +36,4 @@ export const caseHistory: CaseHistoryItem[] = [
   { id: "forum", title: "Thread Forum RT 12", meta: "30 Jul · Bisa diulang", result: "! Coba lagi", tone: "blue" },
 ];
 
-export const nicknameSuggestions = ["NadiaJelita", "KabiJeli", "JejakTajam", "NusaKritis", "RadarFakta"] as const;
+export const nicknameSuggestions = ["AlyaJelita", "KabiJeli", "JejakTajam", "NusaKritis", "RadarFakta"] as const;

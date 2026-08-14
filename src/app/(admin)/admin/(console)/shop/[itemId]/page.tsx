@@ -7,7 +7,7 @@ import { AdminDataError } from "@/src/features/admin/_shared/components/admin-da
 import { ADMIN_ACCESS_COOKIE } from "@/src/features/admin/auth/constants/admin-auth";
 import { AdminItemDetailPage } from "@/src/features/admin/shop/containers/admin-item-detail-page";
 import { uniqueItemCategories } from "@/src/features/admin/shop/data/item-category-utils";
-import { getAdminItemCategoriesFromCatalog, getAdminItemDetail } from "@/src/features/admin/shop/services/admin-items-service";
+import { getAdminItemCategories, getAdminItemDetail } from "@/src/features/admin/shop/services/admin-items-service";
 
 export const metadata: Metadata = { title: "Detail Item | KODEKABI Admin" };
 
@@ -18,11 +18,11 @@ export default async function AdminItemDetailRoute({ params, searchParams }: { p
   if (!accessToken) redirect("/admin/login");
 
   let detail;
-  let catalogCategories;
+  let lookupCategories;
   try {
-    [detail, catalogCategories] = await Promise.all([
+    [detail, lookupCategories] = await Promise.all([
       getAdminItemDetail(itemId, accessToken),
-      getAdminItemCategoriesFromCatalog(accessToken).catch(() => []),
+      getAdminItemCategories(accessToken).catch(() => []),
     ]);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
@@ -30,7 +30,7 @@ export default async function AdminItemDetailRoute({ params, searchParams }: { p
   }
 
   const categories = uniqueItemCategories([], detail.item.category);
-  catalogCategories.forEach((category) => {
+  lookupCategories.forEach((category) => {
     if (!categories.some((item) => item.item_category_id === category.item_category_id)) categories.push(category);
   });
   return <AdminItemDetailPage item={detail.item} categories={categories} edit={query.edit === "1"} />;

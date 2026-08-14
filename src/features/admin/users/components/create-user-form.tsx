@@ -27,7 +27,7 @@ export function CreateUserForm({ roles }: { roles: AdminRole[] }) {
     <form action={formAction} className="mt-6 rounded-2xl border border-border bg-surface p-5 sm:p-7">
       <div className="grid gap-5 md:grid-cols-2">
         <AuthInput label="Email *" name="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="contoh@mail.com" autoComplete="off" required disabled={pending} invalid={Boolean(state.error)} />
-        <AuthInput label="Username *" name="username" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="nadia_putri" autoComplete="off" maxLength={32} required disabled={pending} invalid={Boolean(state.error)} />
+        <AuthInput label="Username *" name="username" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="alya_putri" autoComplete="off" maxLength={32} required disabled={pending} invalid={Boolean(state.error)} />
         <AuthInput label="Password *" name="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Minimal 8 karakter" autoComplete="new-password" required disabled={pending} invalid={Boolean(state.error)} />
         <AuthInput label="Konfirmasi Password *" name="password_confirmation" type="password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder="Ulangi password" autoComplete="new-password" required disabled={pending} invalid={Boolean(state.error)} />
         <div>

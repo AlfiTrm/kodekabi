@@ -14,10 +14,12 @@ export default async function AdminRedeemItemDetailRoute({ params, searchParams 
   let detail;
   try { detail = await getAdminRedeemItemDetail(redeemItemId, token); }
   catch { notFound(); }
-  let types = [detail.item.type];
+  const types = [detail.item.type];
   try {
     const result = await getAdminRedeemTypes(token);
-    if (result.length) types = result;
+    result.forEach((type) => {
+      if (!types.some((item) => item.code === type.code)) types.push(type);
+    });
   } catch { /* The current type keeps the editor usable during lookup failure. */ }
   const query = await searchParams;
   return <AdminRedeemItemDetailPage item={detail.item} types={types} edit={query.edit === "1"} />;

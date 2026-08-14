@@ -14,7 +14,7 @@ export default async function AdminAddRedeemItemRoute() {
   let types: AdminRedeemType[] = [];
   let typeError = "";
   try { types = await getAdminRedeemTypes(token); }
-  catch { typeError = "Daftar tipe redeem gagal dimuat. Periksa koneksi API lalu muat ulang halaman."; }
-  if (!typeError && !types.length) typeError = "Belum ada tipe redeem yang tersedia. Tambahkan tipe melalui backend sebelum membuat item.";
+  catch { typeError = "Daftar tipe redeem gagal dimuat. Tipe baru tetap dapat ditulis secara manual."; }
+  if (!typeError && !types.length) typeError = "Belum ada tipe redeem. Isi tipe baru secara manual; backend akan menyimpannya saat item dibuat.";
   return <AdminCreateRedeemItemPage types={types} typeError={typeError} />;
 }
