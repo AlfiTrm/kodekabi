@@ -1,4 +1,4 @@
-export type CaseFilter = "all" | "ongoing" | "completed";
+export type CaseFilter = "all" | "in_progress" | "completed";
 
 export type UserCase = {
   case_id: string;

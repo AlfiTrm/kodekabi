@@ -4,7 +4,7 @@ import type { CaseFilter as CaseFilterValue } from "../types/case";
 
 const filters: Array<{ label: string; value: CaseFilterValue }> = [
   { label: "Semua", value: "all" },
-  { label: "Berjalan", value: "ongoing" },
+  { label: "Berjalan", value: "in_progress" },
   { label: "Selesai", value: "completed" },
 ];
 

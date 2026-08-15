@@ -1,0 +1,7 @@
+import type { GameplayEvidence } from "../types/gameplay";
+
+const toneClasses = ["bg-green", "bg-purple", "bg-blue", "bg-orange", "bg-red"];
+
+export function GameplayEvidenceSidebar({ evidences, activeId, onOpen }: { evidences: GameplayEvidence[]; activeId: string | null; onOpen: (evidence: GameplayEvidence) => void }) {
+  return <aside className="border-r border-border p-4 sm:p-6 lg:fixed lg:bottom-0 lg:left-0 lg:top-16 lg:z-20 lg:w-[240px] lg:overflow-y-auto lg:bg-background"><p className="font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/45">Papan bukti KODEKABI</p><div className="mt-4 space-y-2">{evidences.map((evidence, index) => <button key={evidence.case_evidence_id} type="button" onClick={() => onOpen(evidence)} className={`flex w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition-colors ${activeId === evidence.case_evidence_id ? "border-purple bg-purple/10" : "border-border bg-surface hover:border-foreground/30"}`}><span className={`size-2 shrink-0 rounded-sm ${toneClasses[index % toneClasses.length]}`} /><span className="min-w-0"><strong className="block truncate text-[11px]">{evidence.label}</strong><small className="block font-mono text-[8px] uppercase text-foreground/35">{evidence.opened ? "Terbuka" : "Belum dibuka"}</small></span></button>)}</div><div className="mt-[min(52vh,480px)] rounded-2xl border border-border bg-surface p-3 text-[10px] italic text-purple/70">&quot;Teliti semua bukti, detektif!&quot;</div></aside>;
+}
