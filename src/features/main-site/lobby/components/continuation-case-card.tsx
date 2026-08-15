@@ -15,7 +15,7 @@ export function ContinuationCaseCard({ item }: { item: UserCase }) {
         <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/65">Kasus berjalan</p>
         <h2 className="mt-4 text-balance font-display text-3xl font-bold uppercase leading-none tracking-[-0.035em]">{item.title}</h2>
         <p className="mt-4 line-clamp-3 text-xs leading-relaxed text-white/70">{item.short_description}</p>
-        <Link href="/cases?tab=ongoing" className="mt-auto inline-flex h-12 w-fit items-center rounded-full bg-white px-7 text-xs font-bold text-button-ink transition-transform duration-200 hover:-translate-y-1">Lanjutkan</Link>
+        <Link href={`/gameplay/start/${encodeURIComponent(item.case_id)}`} className="mt-auto inline-flex h-12 w-fit items-center rounded-full bg-white px-7 text-xs font-bold text-button-ink transition-transform duration-200 hover:-translate-y-1">Lanjutkan</Link>
       </div>
     </article>
   );

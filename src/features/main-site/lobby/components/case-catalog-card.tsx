@@ -25,5 +25,5 @@ export function CaseCatalogCard({ item, index }: { item: UserCase; index: number
   );
 
   if (locked) return <article className={classes}>{content}</article>;
-  return <Link href="/cases" className={classes}>{content}</Link>;
+  return <Link href={`/gameplay/start/${encodeURIComponent(item.case_id)}`} className={classes}>{content}</Link>;
 }

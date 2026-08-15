@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import type { UserCase } from "../types/case";
 
 const difficultyLabels: Record<string, string> = {
@@ -17,7 +19,7 @@ export function CaseCard({ item }: { item: UserCase }) {
   const state = caseState(item);
   const difficulty = difficultyLabels[item.difficulty_level] ?? item.difficulty_level;
 
-  return (
+  const card = (
     <article className={`group flex h-full min-h-[21rem] flex-col overflow-hidden rounded-2xl border bg-surface transition-[transform,border-color,box-shadow] duration-300 ${state.locked ? "border-dashed border-border-strong opacity-70" : "border-white/8 hover:-translate-y-1 hover:rotate-1 hover:border-white/20 hover:shadow-[0_18px_40px_rgba(0,0,0,0.28)]"}`}>
       <div
         className="relative min-h-44 overflow-hidden bg-surface-muted bg-cover bg-center"
@@ -41,5 +43,13 @@ export function CaseCard({ item }: { item: UserCase }) {
         </div>
       </div>
     </article>
+  );
+
+  if (state.locked) return card;
+
+  return (
+    <Link href={`/gameplay/start/${encodeURIComponent(item.case_id)}`} className="block h-full rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple">
+      {card}
+    </Link>
   );
 }

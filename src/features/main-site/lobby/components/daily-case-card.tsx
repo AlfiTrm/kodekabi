@@ -22,7 +22,7 @@ export function DailyCaseCard({ item }: { item: UserCase }) {
           {item.title}<span className="text-orange">.</span>
         </h2>
         <p className="mt-4 line-clamp-3 max-w-sm text-xs leading-relaxed text-white/80">{item.short_description}</p>
-        <Link href="/cases" className="mt-6 inline-flex h-12 items-center rounded-full bg-white px-7 text-xs font-bold text-button-ink transition-transform duration-200 hover:-translate-y-1">Main Sekarang</Link>
+        <Link href={`/gameplay/start/${encodeURIComponent(item.case_id)}`} className="mt-6 inline-flex h-12 items-center rounded-full bg-white px-7 text-xs font-bold text-button-ink transition-transform duration-200 hover:-translate-y-1">Main Sekarang</Link>
       </div>
 
       {item.minimum_level > 1 ? <span className="absolute right-6 top-6 z-10 rounded-full bg-background/75 px-3 py-1.5 text-[9px] font-bold">LV {item.minimum_level}</span> : null}

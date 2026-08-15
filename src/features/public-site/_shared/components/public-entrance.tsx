@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { PUBLIC_ENTRANCE_STORAGE_KEY } from "../constants/entrance";
 
@@ -42,6 +42,7 @@ function runScramble(element: HTMLElement, duration: number) {
 }
 
 export function PublicEntrance() {
+  const [shouldPlay, setShouldPlay] = useState<boolean | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLImageElement>(null);
@@ -50,6 +51,18 @@ export function PublicEntrance() {
   const finalWordmarkRef = useRef<HTMLSpanElement>(null);
   const reversedERef = useRef<HTMLSpanElement>(null);
   const kabiRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        setShouldPlay(window.localStorage.getItem(PUBLIC_ENTRANCE_STORAGE_KEY) !== "true");
+      } catch {
+        setShouldPlay(true);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -64,7 +77,7 @@ export function PublicEntrance() {
     const navbarBrand = document.querySelector<HTMLElement>("[data-public-navbar-brand]");
 
     if (
-      !["new", "playing"].includes(root.dataset.kodekabiEntrance ?? "") ||
+      shouldPlay !== true ||
       !overlay ||
       !stage ||
       !icon ||
@@ -81,7 +94,6 @@ export function PublicEntrance() {
     let cancelled = false;
     const previousOverflow = root.style.overflow;
     overlay.dataset.introActive = "true";
-    root.dataset.kodekabiEntrance = "playing";
     root.style.overflow = "hidden";
 
     const complete = async () => {
@@ -92,8 +104,6 @@ export function PublicEntrance() {
       } catch {
         // The intro still completes when browser privacy settings block storage.
       }
-      root.dataset.kodekabiEntrance = "seen";
-
       await overlay.animate(
         [{ opacity: 1 }, { opacity: 0 }],
         { duration: 140, easing: "cubic-bezier(0.25, 1, 0.5, 1)", fill: "forwards" },
@@ -248,7 +258,9 @@ export function PublicEntrance() {
       root.style.overflow = previousOverflow;
       overlay.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
     };
-  }, []);
+  }, [shouldPlay]);
+
+  if (shouldPlay !== true) return null;
 
   return (
     <div
