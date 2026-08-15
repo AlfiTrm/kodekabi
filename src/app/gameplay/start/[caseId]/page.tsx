@@ -15,7 +15,7 @@ function StartGameplayError() {
   return (
     <div className="min-h-screen bg-background">
       <GameplayHeader caseTitle="Session tidak tersedia" />
-      <main className="grid min-h-[70vh] place-items-center px-6">
+      <main className="grid min-h-[70vh] place-items-center px-6 pt-16">
         <div className="max-w-md text-center">
           <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-orange">Case file belum bisa dibuka</p>
           <h1 className="mt-3 font-display text-4xl font-bold uppercase">Gagal memulai investigasi<span className="text-orange">.</span></h1>

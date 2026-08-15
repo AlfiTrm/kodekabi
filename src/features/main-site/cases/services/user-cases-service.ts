@@ -37,7 +37,7 @@ export async function getUserCases(query: UserCasesQuery, accessToken: string) {
 
     cases.forEach((item) => {
       console.info("[cases] card status", {
-        caseId: item.case_id,
+        caseId: item.case_id, 
         title: item.title,
         accessStatus: item.access_status,
         progressStatus: item.progress_status,
