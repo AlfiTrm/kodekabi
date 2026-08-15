@@ -45,18 +45,7 @@ export function CreateCaseForm({ lookups }: CreateCaseFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="mt-7 space-y-5">
-      <input type="hidden" name="generation_source" value={generationSource} />
-
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 font-mono text-[9px] uppercase text-foreground/40">Mode</span>
-        {lookups.generation_sources.map((option) => {
-          const selected = option.value === generationSource;
-          return (
-            <button key={option.value} type="button" disabled={pending} onClick={() => setGenerationSource(option.value)} className={`h-9 cursor-pointer rounded-full px-5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${selected ? "bg-white text-button-ink" : "border border-border-strong text-foreground/50 hover:border-purple hover:text-foreground"}`}>{option.label}</button>
-          );
-        })}
-        <button type="button" disabled title="Endpoint generate metadata belum tersedia" className="ml-1 inline-flex h-9 cursor-not-allowed items-center gap-2 rounded-full bg-purple px-5 text-xs font-semibold text-white opacity-45"><span aria-hidden="true">⚄</span> Generate Metadata</button>
-      </div>
+      <input type="hidden" name="generation_source" value="manual" />
 
       <section className="rounded-2xl border border-border bg-surface p-5 sm:p-7">
         <h2 className="font-display text-base font-semibold">Informasi Dasar</h2>

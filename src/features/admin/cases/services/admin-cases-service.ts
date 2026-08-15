@@ -245,3 +245,27 @@ export async function resolveAdminCaseId(slug: string, accessToken: string, case
 
   return null;
 }
+
+export type ChatbotConfigResponse = {
+  bot_name: string;
+  bot_persona_description: string;
+  knowledge_boundary: string;
+  prohibited_behaviors: string[];
+  suggested_questions: string[];
+};
+
+export async function getAdminCaseChatbotConfig(caseId: string, accessToken: string) {
+  return serverApi<ChatbotConfigResponse>(`/admin/cases/${encodeURIComponent(caseId)}/chatbot-config`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export function updateAdminCaseChatbotConfig(caseId: string, payload: Record<string, unknown>, accessToken: string) {
+  return serverApi<ChatbotConfigResponse, Record<string, unknown>>(`/admin/cases/${encodeURIComponent(caseId)}/chatbot-config`, {
+    method: "PUT",
+    body: payload,
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+

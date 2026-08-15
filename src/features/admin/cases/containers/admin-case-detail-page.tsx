@@ -7,6 +7,7 @@ import { AdminPageHeader } from "../../_shared/components/admin-page-header";
 import { ADMIN_ACCESS_COOKIE } from "../../auth/constants/admin-auth";
 import { CaseDetailActions } from "../components/case-detail-actions";
 import { CaseDetailSummary } from "../components/case-detail-summary";
+import { CaseChatbotConfig } from "../components/case-chatbot-config";
 import { CaseEvidenceTable } from "../components/case-evidence-table";
 import { CaseQuestionsTable } from "../components/case-questions-table";
 import { getAdminCaseDetail, getAdminCaseEvidences, getAdminCaseQuestions, resolveAdminCaseId } from "../services/admin-cases-service";
@@ -14,7 +15,7 @@ import { getAdminCaseDetail, getAdminCaseEvidences, getAdminCaseQuestions, resol
 type AdminCaseDetailPageProps = {
   slug: string;
   caseIdHint?: string;
-  activeTab?: "evidence" | "questions";
+  activeTab?: "evidence" | "questions" | "chatbot";
 };
 
 export async function AdminCaseDetailPage({ slug, caseIdHint, activeTab = "evidence" }: AdminCaseDetailPageProps) {
@@ -70,11 +71,17 @@ export async function AdminCaseDetailPage({ slug, caseIdHint, activeTab = "evide
       <nav id="workspace" className="mt-6 flex gap-2 overflow-x-auto border-b border-border text-xs" aria-label="Bagian detail case">
         <Link href={`${detailBaseHref}&tab=evidence#workspace`} aria-current={activeTab === "evidence" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "evidence" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Evidence</Link>
         <Link href={`${detailBaseHref}&tab=questions#workspace`} aria-current={activeTab === "questions" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "questions" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Questions</Link>
-        <button type="button" disabled className="shrink-0 cursor-not-allowed px-5 py-3 text-foreground/40">Chatbot Config</button>
+        <Link href={`${detailBaseHref}&tab=chatbot#workspace`} aria-current={activeTab === "chatbot" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "chatbot" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Chatbot Config</Link>
         <button type="button" disabled className="flex shrink-0 cursor-not-allowed items-center gap-2 px-5 py-3 text-foreground/30">Scoring &amp; Outcome <span className="rounded-lg bg-red/12 px-2 py-1 font-mono text-[8px] text-red">LOCKED</span></button>
       </nav>
 
-      {activeTab === "questions" ? <CaseQuestionsTable questions={questions} total={questionTotal} caseItem={caseItem} failed={questionsFailed} /> : <CaseEvidenceTable evidences={evidences} total={evidenceTotal} caseItem={caseItem} failed={evidenceFailed} />}
+      {activeTab === "questions" ? (
+        <CaseQuestionsTable questions={questions} total={questionTotal} caseItem={caseItem} failed={questionsFailed} />
+      ) : activeTab === "chatbot" ? (
+        <CaseChatbotConfig caseItem={caseItem} />
+      ) : (
+        <CaseEvidenceTable evidences={evidences} total={evidenceTotal} caseItem={caseItem} failed={evidenceFailed} />
+      )}
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { CredibilityTagsField, EvidenceField, EvidenceFormSection, EvidenceImage
 import { ForumThreadFields } from "./forum-thread-fields";
 import { PublicAnnouncementFields } from "./public-announcement-fields";
 import { SocialPostFields } from "./social-post-fields";
+import { GenerateImageFromPromptButton } from "./generate-image-from-prompt-button";
 
 export function EditEvidenceForm({ caseItem, evidence }: { caseItem: AdminCase; evidence: AdminCaseEvidenceDetail }) {
   const form = useEditEvidenceForm(caseItem, evidence);
@@ -52,9 +53,12 @@ export function EditEvidenceForm({ caseItem, evidence }: { caseItem: AdminCase; 
 
       {form.supportsImage ? (
         <EvidenceFormSection title="Visual / Gambar (Opsional)">
-          {evidence.image_url ? <p className="mb-3 text-[10px] text-green">Gambar saat ini tersimpan. Upload file hanya jika ingin menggantinya.</p> : null}
-          <EvidenceImageUpload disabled={form.pending} />
-          <div className="mt-5"><EvidenceTextarea label="Image Generation Prompt" name="image_prompt" defaultValue={evidence.image_prompt} disabled={form.pending} /></div>
+          {evidence.image_url ? <p className="mb-3 text-[10px] text-green">Gambar saat ini tersimpan. Upload file baru jika ingin menggantinya.</p> : null}
+          <EvidenceImageUpload disabled={form.pending} initialImageUrl={evidence.image_url} />
+          <div className="mt-5">
+            <EvidenceTextarea label="Image Generation Prompt" name="image_prompt" defaultValue={evidence.image_prompt} disabled={form.pending} />
+            <GenerateImageFromPromptButton disabled={form.pending} />
+          </div>
         </EvidenceFormSection>
       ) : null}
 

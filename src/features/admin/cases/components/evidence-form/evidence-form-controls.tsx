@@ -96,18 +96,32 @@ export function CredibilityTagsField({ selected, onChange, disabled = false }: {
   );
 }
 
-export function EvidenceImageUpload({ disabled = false }: { disabled?: boolean }) {
-  const { inputRef, fileName, error, handleChange, handleDrop } = useEvidenceImageUpload(disabled);
+export function EvidenceImageUpload({ disabled = false, initialImageUrl }: { disabled?: boolean, initialImageUrl?: string }) {
+  const { inputRef, fileName, previewUrl, error, handleChange, handleDrop } = useEvidenceImageUpload(disabled);
+  const displayUrl = previewUrl || initialImageUrl;
 
   return (
     <div>
-      <label onDragOver={(event) => event.preventDefault()} onDrop={handleDrop} className={`grid min-h-36 place-items-center rounded-xl border border-dashed px-5 text-center transition-colors ${disabled ? "cursor-not-allowed border-border opacity-55" : "cursor-pointer border-border-strong bg-background hover:border-purple/60"}`}>
+      <label onDragOver={(event) => event.preventDefault()} onDrop={handleDrop} className={`relative flex min-h-36 flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed px-5 text-center transition-colors ${disabled ? "cursor-not-allowed border-border opacity-55" : "cursor-pointer border-border-strong bg-background hover:border-purple/60"}`}>
         <input ref={inputRef} type="file" name="image" accept="image/png,image/jpeg" disabled={disabled} onChange={handleChange} className="sr-only" />
-        <span>
-          <span aria-hidden="true" className="text-xl">▣</span>
-          <strong className="ml-2 text-xs font-medium text-foreground/65">{fileName || "Klik atau seret file gambar untuk upload"}</strong>
-          <span className="mt-1.5 block text-[10px] text-foreground/35">PNG atau JPG · maksimal 5MB</span>
-        </span>
+        
+        {displayUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={displayUrl} alt="Preview" className="absolute inset-0 h-full w-full object-cover opacity-30 blur-sm transition-opacity group-hover:opacity-10" />
+            <div className="relative z-10 rounded-lg bg-surface/90 p-3 shadow-sm backdrop-blur-md">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={displayUrl} alt="Preview Clear" className="mx-auto max-h-32 rounded object-contain" />
+              <p className="mt-2 text-xs font-semibold text-foreground">{fileName || "Ganti Gambar"}</p>
+            </div>
+          </>
+        ) : (
+          <span>
+            <span aria-hidden="true" className="text-xl">▣</span>
+            <strong className="ml-2 text-xs font-medium text-foreground/65">{fileName || "Klik atau seret file gambar untuk upload"}</strong>
+            <span className="mt-1.5 block text-[10px] text-foreground/35">PNG atau JPG · maksimal 5MB</span>
+          </span>
+        )}
       </label>
       {error ? <p role="alert" className="mt-2 text-[10px] text-red">{error}</p> : null}
     </div>
