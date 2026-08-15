@@ -34,7 +34,7 @@ function GameplayError({ error }: { error: ApiError | null }) {
   return (
     <div className="min-h-screen bg-background">
       <GameplayHeader caseTitle="Session tidak ditemukan" />
-      <main className="grid min-h-[70vh] place-items-center px-6">
+      <main className="grid min-h-[70vh] place-items-center px-6 pt-16">
         <div className="max-w-md text-center">
           <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-red">Case file tidak terbaca</p>
           <h1 className="mt-3 font-display text-4xl font-bold uppercase">Session gameplay gagal dimuat<span className="text-red">.</span></h1>

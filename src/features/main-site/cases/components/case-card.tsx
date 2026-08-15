@@ -11,7 +11,7 @@ const difficultyLabels: Record<string, string> = {
 function caseState(item: UserCase) {
   if (item.access_status === "locked") return { label: item.locked_reason || `Terbuka di level ${item.minimum_level}`, locked: true };
   if (item.progress_status === "completed") return { label: "Selesai", locked: false };
-  if (["ongoing", "in_progress"].includes(item.progress_status)) return { label: "Lanjutkan", locked: false };
+  if (["on_going", "ongoing", "in_progress"].includes(item.progress_status)) return { label: "Lanjutkan", locked: false };
   return { label: "Baru", locked: false };
 }
 
