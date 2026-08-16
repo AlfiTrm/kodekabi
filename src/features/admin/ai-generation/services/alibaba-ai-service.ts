@@ -53,6 +53,43 @@ export async function callQwenText(messages: QwenMessage[], timeoutMs = 25_000):
   }
 }
 
+/**
+ * Calls Alibaba Qwen LLM for plain text chat (no JSON format forced).
+ */
+export async function callQwenChat(messages: QwenMessage[], timeoutMs = 30_000): Promise<string> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(`${serverEnv.alibabaBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serverEnv.alibabaApiKey}`,
+      },
+      body: JSON.stringify({
+        model: serverEnv.alibabaTextModel,
+        messages,
+        enable_thinking: false,
+        temperature: 0.7,
+      }),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null) as { message?: string } | null;
+      throw new Error(errorBody?.message ?? `AI Chat API error: ${response.status}`);
+    }
+
+    const data = await response.json() as QwenTextResponse;
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) throw new Error("AI returned empty chat response.");
+    return content;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 // ─── Image Generation (Qwen Image 3.0) ──────────────────────────────────────
 
 type QwenImageResponse = {

@@ -1,6 +1,6 @@
 "use client";
 
-import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
+import { useEffect, useRef, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from "react";
 
 import { AdminDateInput } from "../../../_shared/components/admin-date-input";
 import { credibilityTagOptions } from "../../data/evidence-form-options";
@@ -74,10 +74,24 @@ export function EvidenceToggle({ name, label, checked, onChange, disabled = fals
 }
 
 export function CredibilityTagsField({ selected, onChange, disabled = false }: { selected: string[]; onChange: (tags: string[]) => void; disabled?: boolean }) {
-  const { open, toggleOpen, toggleTag } = useCredibilityTags(selected, onChange);
+  const { open, toggleOpen, close, toggleTag } = useCredibilityTags(selected, onChange);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) close();
+    }
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+    };
+  }, [open, close]);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <span className="mb-2 block text-xs font-semibold">Credibility Tags</span>
       <input type="hidden" name="credibility_tags" value={selected.join(",")} />
       <button type="button" aria-haspopup="listbox" aria-expanded={open} disabled={disabled} onClick={toggleOpen} className={`flex h-11 w-full cursor-pointer items-center justify-between rounded-xl border bg-background px-3 text-left text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${open ? "border-purple" : "border-border-strong"}`}>
@@ -88,7 +102,7 @@ export function CredibilityTagsField({ selected, onChange, disabled = false }: {
         <div role="listbox" aria-label="Credibility tags" aria-multiselectable="true" className="absolute inset-x-0 top-[calc(100%+0.4rem)] z-30 rounded-xl border border-border-strong bg-surface-elevated p-1.5 shadow-[0_8px_8px_rgba(0,0,0,0.32)]">
           {credibilityTagOptions.map((option) => {
             const active = selected.includes(option.value);
-            return <button key={option.value} type="button" role="option" aria-selected={active} onClick={() => toggleTag(option.value)} className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-left text-xs transition-colors ${active ? "bg-purple/15 font-semibold text-purple" : "text-foreground/65 hover:bg-white/5 hover:text-foreground"}`}><span>{option.label}</span><span aria-hidden="true">{active ? "✓" : ""}</span></button>;
+            return <button key={option.value} type="button" role="option" aria-selected={active} onClick={() => { toggleTag(option.value); close(); }} className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-left text-xs transition-colors ${active ? "bg-purple/15 font-semibold text-purple" : "text-foreground/65 hover:bg-white/5 hover:text-foreground"}`}><span>{option.label}</span><span aria-hidden="true">{active ? "✓" : ""}</span></button>;
           })}
         </div>
       ) : null}

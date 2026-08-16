@@ -50,6 +50,14 @@ export type GameplayQuestion = {
   [key: string]: unknown;
 };
 
+export type GameplayChatbotConfig = {
+  bot_name: string;
+  bot_persona_description: string;
+  knowledge_boundary: string;
+  prohibited_behaviors: string[];
+  suggested_questions: string[];
+};
+
 export type GameplayProgress = {
   opened_evidence_count: number;
   total_evidence_count: number;
@@ -63,7 +71,8 @@ export type GameplayResponse = {
   case: GameplayCase;
   evidences: GameplayEvidence[] | null;
   questions: GameplayQuestion[] | null;
-  answers: unknown[] | null;
+  chatbot_config: GameplayChatbotConfig | null;
+  answers: GameplayAnswer[] | null;
   evidence_progress: unknown[] | null;
   progress: GameplayProgress;
 };
@@ -104,3 +113,4 @@ export type SubmitGameplayResponse = {
   progression: { level_after: number; xp_after: number; coin_balance_after: number; reputation_after: number };
   feedback: { strength_category: string; improvement_category: string; message: string };
 };
+

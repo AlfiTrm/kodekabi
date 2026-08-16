@@ -301,7 +301,7 @@ export function AiAssistedCreateCaseForm({ lookups }: AiAssistedCreateCaseFormPr
                   {[
                     { label: "Risk Level", value: (aiStep as { metadata: AiGeneratedCaseMetadata }).metadata.risk_level },
                     { label: "Durasi", value: `${(aiStep as { metadata: AiGeneratedCaseMetadata }).metadata.estimated_duration_minutes} menit` },
-                    { label: "Difficulty", value: difficulty },
+                    { label: "Difficulty", value: DIFFICULTY_OPTIONS.find((d) => d.value === difficulty)?.label ?? difficulty },
                   ].map((badge) => (
                     <span key={badge.label} className="rounded-lg border border-border-strong px-3 py-1 font-mono text-[10px] text-foreground/60">
                       {badge.label}: <strong className="text-foreground">{badge.value}</strong>
@@ -391,3 +391,4 @@ export function AiAssistedCreateCaseForm({ lookups }: AiAssistedCreateCaseFormPr
     </div>
   );
 }
+

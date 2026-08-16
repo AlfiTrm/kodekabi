@@ -15,7 +15,7 @@ export default async function AdminCaseDetailRoute({ params, searchParams }: Adm
   const { slug } = await params;
   const query = await searchParams;
   const caseId = typeof query.caseId === "string" ? query.caseId : undefined;
-  const activeTab = query.tab === "questions" ? "questions" : query.tab === "chatbot" ? "chatbot" : "evidence";
+  const activeTab = query.tab === "questions" ? "questions" : query.tab === "chatbot" ? "chatbot" : query.tab === "scoring" ? "scoring" : "evidence";
 
   return <AdminCaseDetailPage slug={slug} caseIdHint={caseId} activeTab={activeTab} />;
 }

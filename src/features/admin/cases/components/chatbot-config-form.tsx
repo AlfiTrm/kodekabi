@@ -71,34 +71,10 @@ export function ChatbotConfigForm({ caseId, caseItem, initialData }: ChatbotConf
   const [botPersona, setBotPersona] = useState(initialData?.bot_persona_description ?? "");
   const [knowledgeBoundary, setKnowledgeBoundary] = useState(initialData?.knowledge_boundary ?? "");
 
-  // Sync state if initialData changes (e.g. after revalidation or if wrapped differently)
-  useEffect(() => {
-    if (initialData) {
-      // In case the API returns it wrapped in an array, `config`, `data`, or `chatbot_config`
-      const unwrapped = Array.isArray(initialData) ? initialData[0] : initialData;
-      const data = unwrapped && typeof unwrapped === "object" 
-                   ? ("bot_name" in unwrapped ? unwrapped : 
-                     (unwrapped as any).chatbot_config || 
-                     (unwrapped as any).config || 
-                     (unwrapped as any).data || 
-                     unwrapped)
-                   : {};
-                   
-      if (data.bot_name) setBotName(data.bot_name);
-      if (data.bot_persona_description) setBotPersona(data.bot_persona_description);
-      if (data.knowledge_boundary) setKnowledgeBoundary(data.knowledge_boundary);
-      
-      if (Array.isArray(data.prohibited_behaviors) && data.prohibited_behaviors.length > 0) {
-        setProhibited(data.prohibited_behaviors);
-      }
-      if (Array.isArray(data.suggested_questions) && data.suggested_questions.length > 0) {
-        setQuestions(data.suggested_questions);
-      }
-    }
-  }, [initialData]);
-
   useEffect(() => {
     if (state.success) {
+      // Auto-dismiss notification: surface the action result once, then clear it.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuccessMsg("Konfigurasi chatbot berhasil disimpan.");
       const t = setTimeout(() => setSuccessMsg(""), 3000);
       return () => clearTimeout(t);

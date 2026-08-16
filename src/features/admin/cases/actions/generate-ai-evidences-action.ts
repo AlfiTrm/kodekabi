@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { ADMIN_ACCESS_COOKIE } from "../../auth/constants/admin-auth";
-import { callQwenText, generateQwenImage, downloadImageAsFile } from "@/src/features/admin/ai-generation/services/alibaba-ai-service";
+import { generateQwenImage, downloadImageAsFile } from "@/src/features/admin/ai-generation/services/alibaba-ai-service";
 import { createAdminCaseEvidence, getAdminCaseDetail, getAdminCaseChatbotConfig } from "../services/admin-cases-service";
 import { ApiError } from "@/src/shared/services/api/api-error";
 
@@ -21,7 +21,7 @@ Output HARUS JSON valid dengan struktur:
       "credibility_tags": ["hoax", "fact", dll],
       "is_critical": true/false,
       "needs_image": true/false, // Set true jika butuh gambar ilustrasi (hanya untuk social_post, article, blog)
-      "image_prompt": "Prompt visual deskriptif berbahasa Inggris untuk AI image generator (hanya jika needs_image: true)",
+      "image_prompt": "Prompt visual deskriptif berbahasa Inggris untuk AI image generator (hanya jika needs_image: true). WAJIB digabung dengan STYLE ANCHOR ini di bagian akhir prompt: 'Flat illustration style, muted dark palette with one accent color per theme, minimalist, editorial-style, no photorealistic faces, consistent with a modern digital-investigation game aesthetic — Kota Nusa universe.'",
       // Kolom berdasarkan template_type:
       // - social_post: author_name, author_handle, platform, post_text, timestamp (YYYY-MM-DD HH:MM:SS), likes_count, shares_count, comments_count, is_verified_account (true/false)
       // - article: headline, source_name, author_name, publish_date (YYYY-MM-DD), url, body_text
@@ -60,15 +60,33 @@ export async function generateAiEvidencesAction(caseId: string, caseSlug: string
       }
     }
 
-    const taskPrompt = `Buatkan 3-5 item evidence untuk kasus ini:
+    const taskPrompt = `Buatkan tepat 1 item evidence secara acak (pilih salah satu dari jenis evidence yang tersedia) untuk kasus ini:
 Judul: ${caseItem.title}
 Deskripsi Singkat: ${caseItem.short_description}
 ${chatbotContext ? "\\n" + chatbotContext : ""}`;
 
-    const rawJson = await callQwenText([
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: taskPrompt },
-    ]);
+    const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const geminiModel = process.env.GEMINI_MODEL || "gemini-flash-latest";
+    
+    if (!geminiApiKey) throw new Error("Gemini API Key tidak ditemukan di environment.");
+
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: taskPrompt }] }],
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        generationConfig: { responseMimeType: "application/json" }
+      })
+    });
+
+    if (!geminiRes.ok) {
+      throw new Error(`Gemini API Error: ${geminiRes.status}`);
+    }
+
+    const geminiData = await geminiRes.json();
+    const rawJson = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawJson) throw new Error("Gemini tidak mengembalikan teks.");
 
     const result = JSON.parse(rawJson);
     if (!result.evidences || !Array.isArray(result.evidences) || result.evidences.length === 0) {
@@ -117,14 +135,14 @@ ${chatbotContext ? "\\n" + chatbotContext : ""}`;
         }
       } else {
         if (Array.isArray(e.posts)) {
-          e.posts = e.posts.map((p: any) => {
+          e.posts = e.posts.map((p: Record<string, unknown>) => {
             let ts = p.timestamp ? String(p.timestamp).replace("T", " ") : "";
             if (ts.length === 16) ts += ":00";
             return { ...p, timestamp: ts };
           });
         }
         if (Array.isArray(e.messages)) {
-          e.messages = e.messages.map((m: any) => {
+          e.messages = e.messages.map((m: Record<string, unknown>) => {
             let ts = m.timestamp ? String(m.timestamp).replace("T", " ") : "";
             if (ts.length === 16) ts += ":00";
             return { ...m, timestamp: ts };
@@ -151,3 +169,4 @@ ${chatbotContext ? "\\n" + chatbotContext : ""}`;
     return { error: error instanceof Error ? error.message : "Terjadi kesalahan saat memanggil AI." };
   }
 }
+

@@ -27,7 +27,7 @@ export function CreateCaseForm({ lookups }: CreateCaseFormProps) {
   const [difficulty, setDifficulty] = useState(lookups.difficulty_levels[0]?.value ?? "low");
   const [risk, setRisk] = useState(lookups.risk_levels.find((option) => option.value === "medium")?.value ?? lookups.risk_levels[0]?.value ?? "");
   const [unlock, setUnlock] = useState<CaseUnlockValue>(caseUnlockOptions[0].value);
-  const [generationSource, setGenerationSource] = useState(lookups.generation_sources.find((option) => option.value === "manual")?.value ?? lookups.generation_sources[0]?.value ?? "manual");
+  const [generationSource] = useState(lookups.generation_sources.find((option) => option.value === "manual")?.value ?? lookups.generation_sources[0]?.value ?? "manual");
   const hasRequiredLookups = Boolean(theme && competency && difficulty && risk && generationSource);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -123,3 +123,4 @@ export function CreateCaseForm({ lookups }: CreateCaseFormProps) {
     </form>
   );
 }
+

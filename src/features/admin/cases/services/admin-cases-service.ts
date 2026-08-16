@@ -115,7 +115,14 @@ export async function getAdminCaseEvidenceDetail(caseId: string, versionId: stri
     },
   );
 
-  return "evidence" in result ? result : { evidence: result };
+  const detail = "evidence" in result ? result.evidence : result;
+  const template = detail.template_type as EvidenceTemplateType;
+  const nested = (detail as Record<string, unknown>)[template] as Record<string, unknown> | undefined;
+  const evidence = nested && typeof nested === "object" && !Array.isArray(nested)
+    ? ({ ...nested, template_type: detail.template_type } as AdminCaseEvidenceDetail)
+    : detail;
+
+  return { evidence };
 }
 
 export function updateAdminCaseEvidence(
@@ -263,6 +270,22 @@ export async function getAdminCaseChatbotConfig(caseId: string, accessToken: str
 
 export function updateAdminCaseChatbotConfig(caseId: string, payload: Record<string, unknown>, accessToken: string) {
   return serverApi<ChatbotConfigResponse, Record<string, unknown>>(`/admin/cases/${encodeURIComponent(caseId)}/chatbot-config`, {
+    method: "PUT",
+    body: payload,
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+
+export async function getAdminCaseScoringOutcomeConfig(caseId: string, versionId: string, accessToken: string) {
+  return serverApi<import("../types/admin-case").ScoringOutcomeConfigResponse>(`/admin/cases/${encodeURIComponent(caseId)}/versions/${encodeURIComponent(versionId)}/scoring-outcome-config`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export function updateAdminCaseScoringOutcomeConfig(caseId: string, versionId: string, payload: Record<string, unknown>, accessToken: string) {
+  return serverApi<import("../types/admin-case").ScoringOutcomeConfigResponse, Record<string, unknown>>(`/admin/cases/${encodeURIComponent(caseId)}/versions/${encodeURIComponent(versionId)}/scoring-outcome-config`, {
     method: "PUT",
     body: payload,
     headers: { Authorization: `Bearer ${accessToken}` },

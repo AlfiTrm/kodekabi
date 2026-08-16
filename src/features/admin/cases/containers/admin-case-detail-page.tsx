@@ -10,12 +10,13 @@ import { CaseDetailSummary } from "../components/case-detail-summary";
 import { CaseChatbotConfig } from "../components/case-chatbot-config";
 import { CaseEvidenceTable } from "../components/case-evidence-table";
 import { CaseQuestionsTable } from "../components/case-questions-table";
+import { CaseScoringOutcome } from "../components/case-scoring-outcome";
 import { getAdminCaseDetail, getAdminCaseEvidences, getAdminCaseQuestions, resolveAdminCaseId } from "../services/admin-cases-service";
 
 type AdminCaseDetailPageProps = {
   slug: string;
   caseIdHint?: string;
-  activeTab?: "evidence" | "questions" | "chatbot";
+  activeTab?: "evidence" | "questions" | "chatbot" | "scoring";
 };
 
 export async function AdminCaseDetailPage({ slug, caseIdHint, activeTab = "evidence" }: AdminCaseDetailPageProps) {
@@ -72,13 +73,15 @@ export async function AdminCaseDetailPage({ slug, caseIdHint, activeTab = "evide
         <Link href={`${detailBaseHref}&tab=evidence#workspace`} aria-current={activeTab === "evidence" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "evidence" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Evidence</Link>
         <Link href={`${detailBaseHref}&tab=questions#workspace`} aria-current={activeTab === "questions" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "questions" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Questions</Link>
         <Link href={`${detailBaseHref}&tab=chatbot#workspace`} aria-current={activeTab === "chatbot" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "chatbot" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Chatbot Config</Link>
-        <button type="button" disabled className="flex shrink-0 cursor-not-allowed items-center gap-2 px-5 py-3 text-foreground/30">Scoring &amp; Outcome <span className="rounded-lg bg-red/12 px-2 py-1 font-mono text-[8px] text-red">LOCKED</span></button>
+        <Link href={`${detailBaseHref}&tab=scoring#workspace`} aria-current={activeTab === "scoring" ? "page" : undefined} className={`shrink-0 px-5 py-3 font-semibold transition-colors ${activeTab === "scoring" ? "border-b-2 border-purple text-foreground" : "text-foreground/45 hover:text-foreground"}`}>Scoring &amp; Outcome</Link>
       </nav>
 
       {activeTab === "questions" ? (
         <CaseQuestionsTable questions={questions} total={questionTotal} caseItem={caseItem} failed={questionsFailed} />
       ) : activeTab === "chatbot" ? (
         <CaseChatbotConfig caseItem={caseItem} />
+      ) : activeTab === "scoring" ? (
+        <CaseScoringOutcome caseItem={caseItem} />
       ) : (
         <CaseEvidenceTable evidences={evidences} total={evidenceTotal} caseItem={caseItem} failed={evidenceFailed} />
       )}

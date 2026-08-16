@@ -52,7 +52,7 @@ export function GenerateImageFromPromptButton({ disabled }: { disabled?: boolean
       } else {
         setErrorMessage("Input gambar tidak ditemukan di halaman.");
       }
-    } catch (error) {
+    } catch {
       setErrorMessage("Terjadi kesalahan saat memanggil AI Image Generator.");
     } finally {
       setIsGenerating(false);
@@ -110,3 +110,4 @@ export function GenerateImageFromPromptButton({ disabled }: { disabled?: boolean
     </>
   );
 }
+

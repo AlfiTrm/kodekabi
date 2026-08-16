@@ -12,20 +12,24 @@ type GenerateAiEvidencesButtonProps = {
 
 export function GenerateAiEvidencesButton({ caseItem, disabled }: GenerateAiEvidencesButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [modalState, setModalState] = useState<"confirm" | "success" | "error" | null>(null);
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleGenerate = async () => {
-    setShowModal(false);
+    setModalState(null);
     setIsGenerating(true);
     try {
       const res = await generateAiEvidencesAction(caseItem.case_id, caseItem.slug, caseItem.current_case_version_id);
       if (res.error) {
-        alert("Gagal menghasilkan evidence: " + res.error);
+        setModalMessage("Gagal menghasilkan evidence: " + res.error);
+        setModalState("error");
       } else {
-        alert(`Berhasil menambahkan ${res.count} evidence.`);
+        setModalMessage(`Berhasil menambahkan ${res.count} evidence baru menggunakan AI.`);
+        setModalState("success");
       }
-    } catch (error) {
-      alert("Terjadi kesalahan saat memanggil AI.");
+    } catch {
+      setModalMessage("Terjadi kesalahan saat memanggil AI.");
+      setModalState("error");
     } finally {
       setIsGenerating(false);
     }
@@ -35,7 +39,7 @@ export function GenerateAiEvidencesButton({ caseItem, disabled }: GenerateAiEvid
     <>
       <button 
         type="button" 
-        onClick={() => setShowModal(true)}
+        onClick={() => setModalState("confirm")}
         disabled={disabled || isGenerating} 
         className="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full bg-purple px-5 text-xs font-semibold text-white transition hover:bg-purple/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
       >
@@ -43,17 +47,17 @@ export function GenerateAiEvidencesButton({ caseItem, disabled }: GenerateAiEvid
         {isGenerating ? "Menganalisis & Menggambar..." : "Generate AI (1 Evidence)"}
       </button>
 
-      {showModal && (
+      {modalState === "confirm" && (
         <ConfirmationModal
           labelledBy="generate-evidence-modal-title"
           title="Generate AI Evidence"
           description="AI akan menganalisis kasus ini dan membuat 1 evidence (termasuk gambar ilustrasi jika diperlukan). Lanjutkan?"
-          onClose={() => setShowModal(false)}
+          onClose={() => setModalState(null)}
           footer={
             <>
               <button
                 type="button"
-                onClick={() => setShowModal(false)}
+                onClick={() => setModalState(null)}
                 className="h-9 cursor-pointer rounded-lg px-4 text-xs font-medium text-foreground/60 transition-colors hover:bg-surface-muted hover:text-foreground"
               >
                 Batal
@@ -69,6 +73,25 @@ export function GenerateAiEvidencesButton({ caseItem, disabled }: GenerateAiEvid
           }
         />
       )}
+
+      {(modalState === "success" || modalState === "error") && (
+        <ConfirmationModal
+          labelledBy="result-modal-title"
+          title={modalState === "success" ? "Berhasil!" : "Gagal"}
+          description={modalMessage}
+          onClose={() => setModalState(null)}
+          footer={
+            <button
+              type="button"
+              onClick={() => setModalState(null)}
+              className="h-9 cursor-pointer rounded-lg bg-purple px-4 text-xs font-medium text-white transition-colors hover:bg-purple/90"
+            >
+              Tutup
+            </button>
+          }
+        />
+      )}
     </>
   );
 }
+
