@@ -313,3 +313,32 @@ export type AdminQuestionDetailResponse = {
 export type DeleteAdminQuestionResponse = { case_question_id: string };
 export type DeleteAdminQuestionActionState = { error: string | null };
 export type UpdateAdminQuestionActionState = { error: string | null };
+
+export type ScoringRule = {
+  category_key: string;
+  category_label: string;
+  weight_basis_points: number;
+  settings: Record<string, unknown>;
+  sort_order?: number;
+};
+
+export type OutcomeRule = {
+  outcome_key: string;
+  outcome_label: string;
+  score_min: number;
+  score_max: number;
+  outcome_id: string;
+  narrative_text: string;
+  sort_order: number;
+  city_impact_settings?: Array<{
+    impact_key: string;
+    impact_value: number;
+    sort_order?: number;
+  }>;
+};
+
+export type ScoringOutcomeConfigResponse = {
+  scoring_rules: ScoringRule[];
+  outcome_rules: OutcomeRule[];
+};
+

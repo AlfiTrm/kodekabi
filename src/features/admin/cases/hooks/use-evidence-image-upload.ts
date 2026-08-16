@@ -10,6 +10,8 @@ export function useEvidenceImageUpload(disabled: boolean) {
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");
 
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   function validateFile(file?: File) {
     if (!file) return false;
     if (!acceptedImageTypes.has(file.type)) {
@@ -22,6 +24,7 @@ export function useEvidenceImageUpload(disabled: boolean) {
     }
     setError("");
     setFileName(file.name);
+    setPreviewUrl(URL.createObjectURL(file));
     return true;
   }
 
@@ -39,5 +42,5 @@ export function useEvidenceImageUpload(disabled: boolean) {
     if (inputRef.current) inputRef.current.files = transfer.files;
   }
 
-  return { inputRef, fileName, error, handleChange, handleDrop };
+  return { inputRef, fileName, previewUrl, error, handleChange, handleDrop };
 }
