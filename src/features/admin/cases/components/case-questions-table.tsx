@@ -4,6 +4,7 @@ import { AdminEmptyState } from "../../_shared/components/admin-empty-state";
 import { AdminIcon } from "../../_shared/components/admin-icon";
 import type { AdminCase, AdminCaseQuestion, AdminQuestionType } from "../types/admin-case";
 import { DeleteQuestionButton } from "./delete-question-button";
+import { GenerateAiQuestionsButton } from "./generate-ai-questions-button";
 
 const questionTypeLabels: Record<AdminQuestionType, string> = {
   mcq: "Multiple Choice",
@@ -33,7 +34,7 @@ export function CaseQuestionsTable({ questions, total, caseItem, failed = false 
         <h2 className="font-display text-lg font-semibold">Investigation Questions <span className="ml-1 font-mono text-[10px] font-normal text-foreground/40">({total} questions)</span></h2>
         <div className="flex flex-wrap gap-2">
           <Link href={addHref} className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-border-strong px-5 text-xs font-semibold transition-colors hover:border-purple hover:text-purple">+ Tambah Question</Link>
-          <button type="button" disabled title="Endpoint generate question belum tersedia" className="h-10 cursor-not-allowed rounded-full bg-purple px-5 text-xs font-semibold text-white opacity-45">Generate AI Questions (3-5 items)</button>
+          <GenerateAiQuestionsButton caseItem={caseItem} disabled={failed} />
         </div>
       </div>
 

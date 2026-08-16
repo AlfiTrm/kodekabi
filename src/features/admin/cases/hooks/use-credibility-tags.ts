@@ -9,9 +9,13 @@ export function useCredibilityTags(selected: string[], onChange: (tags: string[]
     setOpen((current) => !current);
   }
 
+  function close() {
+    setOpen(false);
+  }
+
   function toggleTag(value: string) {
     onChange(selected.includes(value) ? selected.filter((tag) => tag !== value) : [...selected, value]);
   }
 
-  return { open, toggleOpen, toggleTag };
+  return { open, toggleOpen, close, toggleTag };
 }

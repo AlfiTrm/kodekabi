@@ -13,6 +13,7 @@ import { CredibilityTagsField, EvidenceField, EvidenceFormSection, EvidenceImage
 import { ForumThreadFields } from "./forum-thread-fields";
 import { PublicAnnouncementFields } from "./public-announcement-fields";
 import { SocialPostFields } from "./social-post-fields";
+import { GenerateImageFromPromptButton } from "./generate-image-from-prompt-button";
 
 export function AddEvidenceForm({ caseItem, nextSortOrder }: { caseItem: AdminCase; nextSortOrder: number }) {
   const {
@@ -74,7 +75,10 @@ export function AddEvidenceForm({ caseItem, nextSortOrder }: { caseItem: AdminCa
       {supportsImage ? (
         <EvidenceFormSection title="Visual / Gambar (Opsional)">
           <EvidenceImageUpload disabled={pending} />
-          <div className="mt-5"><EvidenceTextarea label="Image Generation Prompt" name="image_prompt" placeholder="Deskripsikan visual evidence untuk image generator..." disabled={pending} /></div>
+          <div className="mt-5">
+            <EvidenceTextarea label="Image Generation Prompt" name="image_prompt" placeholder="Deskripsikan visual evidence untuk image generator..." disabled={pending} />
+            <GenerateImageFromPromptButton disabled={pending} />
+          </div>
         </EvidenceFormSection>
       ) : null}
 

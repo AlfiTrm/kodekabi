@@ -4,6 +4,7 @@ import { AdminEmptyState } from "../../_shared/components/admin-empty-state";
 import { AdminIcon } from "../../_shared/components/admin-icon";
 import type { AdminCase, AdminCaseEvidence } from "../types/admin-case";
 import { DeleteEvidenceButton } from "./delete-evidence-button";
+import { GenerateAiEvidencesButton } from "./generate-ai-evidences-button";
 
 type CaseEvidenceTableProps = {
   evidences: AdminCaseEvidence[];
@@ -27,7 +28,7 @@ export function CaseEvidenceTable({ evidences, total, caseItem, failed = false }
         <h2 className="font-display text-lg font-semibold">Evidence Items <span className="ml-1 font-mono text-[10px] font-normal text-foreground/40">({total} evidence)</span></h2>
         <div className="flex flex-wrap gap-2">
           {reachedLimit ? <button type="button" disabled title="Maksimal 5 evidence per case" className="h-10 cursor-not-allowed rounded-full border border-border-strong px-5 text-xs font-semibold text-foreground/45 opacity-55">Batas 5 Evidence</button> : <Link href={addEvidenceHref} className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-border-strong px-5 text-xs font-semibold text-foreground transition-colors hover:border-purple hover:text-purple">+ Tambah Evidence</Link>}
-          <button type="button" disabled title="Endpoint generate evidence belum tersedia" className="h-10 cursor-not-allowed rounded-full bg-purple px-5 text-xs font-semibold text-white opacity-45">Generate AI (3-5 Evidence)</button>
+          <GenerateAiEvidencesButton caseItem={caseItem} disabled={reachedLimit || failed} />
         </div>
       </div>
 

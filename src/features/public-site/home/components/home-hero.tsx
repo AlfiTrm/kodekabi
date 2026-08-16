@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { Button } from "@/src/shared/components/ui/button";
 
 export function HomeHero() {
@@ -35,3 +33,4 @@ export function HomeHero() {
     </section>
   );
 }
+

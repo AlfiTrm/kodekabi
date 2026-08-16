@@ -28,7 +28,7 @@ export default async function EditEvidenceRoute({ params, searchParams }: EditEv
   }
 
   if (result.caseItem.slug.toLocaleLowerCase() !== decodeURIComponent(slug).toLocaleLowerCase()) notFound();
-  return <AdminEditEvidencePage caseItem={result.caseItem} evidence={result.evidence} />;
+  return <AdminEditEvidencePage caseItem={result.caseItem} evidence={result.evidence} rawResponse={result.rawResponse} />;
 }
 
 async function loadEditEvidence(slug: string, evidenceId: string, caseIdHint: string | undefined, versionIdHint: string | undefined, accessToken: string) {
@@ -39,7 +39,8 @@ async function loadEditEvidence(slug: string, evidenceId: string, caseIdHint: st
     const caseDetail = await getAdminCaseDetail(caseId, accessToken);
     const versionId = versionIdHint || caseDetail.case.current_case_version_id;
     const evidenceDetail = await getAdminCaseEvidenceDetail(caseId, versionId, evidenceId, accessToken);
-    return { caseItem: caseDetail.case, evidence: evidenceDetail.evidence };
+    console.log("[getAdminCaseEvidenceDetail]", JSON.stringify(evidenceDetail, null, 2));
+    return { caseItem: caseDetail.case, evidence: evidenceDetail.evidence, rawResponse: evidenceDetail };
   } catch {
     return null;
   }
