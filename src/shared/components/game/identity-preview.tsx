@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 
 import type { BannerCosmetic, TitleCosmetic } from "@/src/shared/types/game-cosmetic";
 import { DecorativeTitle } from "./decorative-title";
@@ -22,6 +23,7 @@ type IdentityPreviewProps = {
   banner: BannerCosmetic;
   stats: IdentityStats;
   showMetaCopy?: boolean;
+  nicknameAction?: ReactNode;
 };
 
 const bannerClasses = {
@@ -29,7 +31,7 @@ const bannerClasses = {
   "night-watch": "bg-purple shadow-[0_10px_0_var(--purple-shadow)]",
 } as const;
 
-export function IdentityPreview({ nickname, detective, title, banner, stats, showMetaCopy = true }: IdentityPreviewProps) {
+export function IdentityPreview({ nickname, detective, title, banner, stats, showMetaCopy = true, nicknameAction }: IdentityPreviewProps) {
   return (
     <section className={`relative mx-auto w-full max-w-[380px] ${showMetaCopy ? "pt-7" : ""}`} aria-label="Pratinjau identitas pemain">
       {showMetaCopy ? <p className="absolute inset-x-0 top-0 text-center text-[10px] uppercase tracking-[0.12em] text-foreground/45">Identitas auditormu</p> : null}
@@ -46,7 +48,7 @@ export function IdentityPreview({ nickname, detective, title, banner, stats, sho
         </div>
         <Image src={detective.image} alt={detective.name} width={320} height={390} className="absolute inset-x-0 bottom-24 z-10 mx-auto h-[67%] w-auto object-contain object-bottom drop-shadow-[0_8px_0_rgba(15,17,24,0.16)]" />
         <div className="absolute inset-x-5 bottom-6 z-20 flex flex-col items-center">
-          <p className="mb-3 font-display text-2xl font-bold uppercase tracking-[-0.03em] text-white sm:text-3xl">{nickname || "Nama Kamu"}</p>
+          <div className="mb-3 flex items-center justify-center gap-2"><p className="font-display text-2xl font-bold uppercase tracking-[-0.03em] text-white sm:text-3xl">{nickname || "Nama Kamu"}</p>{nicknameAction}</div>
           <DecorativeTitle title={title} />
         </div>
       </div>

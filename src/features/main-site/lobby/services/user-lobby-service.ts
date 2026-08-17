@@ -12,6 +12,14 @@ export const getUserLobby = cache(async (accessToken: string) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
+  console.log("[level-debug] Response /users/lobby:", {
+    profile: {
+      username: result.profile?.username,
+      coin_balance: result.profile?.coin_balance,
+    },
+    level: result.level,
+  });
+
   return {
     ...result,
     city_stats: Array.isArray(result.city_stats) ? result.city_stats : [],
