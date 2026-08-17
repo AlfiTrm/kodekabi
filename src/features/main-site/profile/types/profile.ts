@@ -86,6 +86,20 @@ export type UserProfileResponse = {
   case_history: { items: UserCaseHistoryItem[] | null } | null;
 };
 
+export type UserTitle = {
+  title_id: string;
+  title: string;
+  unlock_level: number;
+  image_border: string;
+  is_owned: boolean;
+  is_equipped: boolean;
+  can_equip: boolean;
+};
+
+export type UserTitlesResponse = {
+  titles: UserTitle[] | null;
+};
+
 export type EquippedShopItem = {
   item_id: string;
   item_category_id: string;

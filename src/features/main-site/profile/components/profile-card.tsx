@@ -4,7 +4,7 @@ import { IdentityPreview } from "@/src/shared/components/game/identity-preview";
 import { profileBanner } from "../data/profile";
 import type { ProfileTitle, UserProfile } from "../types/profile";
 
-export function ProfileCard({ profile }: { profile: UserProfile }) {
+export function ProfileCard({ profile, onEditNickname }: { profile: UserProfile; onEditNickname: () => void }) {
   const title: ProfileTitle = {
     id: "active-title",
     kind: "title",
@@ -25,6 +25,7 @@ export function ProfileCard({ profile }: { profile: UserProfile }) {
         banner={profileBanner}
         stats={{ level: profile.current_level, cases: profile.cases_completed, reputation: Math.round(profile.auditor_reputation), accuracy: Math.round(profile.accuracy_percent) }}
         showMetaCopy={false}
+        nicknameAction={<button type="button" onClick={onEditNickname} aria-label="Edit nickname" className="grid size-6 place-items-center rounded-full border border-white/45 bg-button-ink/20 text-xs text-white transition-colors hover:border-white hover:bg-button-ink/35">✎</button>}
       />
     </div>
   );

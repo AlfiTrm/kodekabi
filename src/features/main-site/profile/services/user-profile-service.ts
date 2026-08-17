@@ -12,6 +12,15 @@ export const getUserProfile = cache(async (accessToken: string) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
+  console.log("[level-debug] Response /users/profile:", {
+    profile: {
+      username: result.profile?.username,
+      current_level: result.profile?.current_level,
+      current_xp: result.profile?.current_xp,
+    },
+    level_progress: result.level_progress,
+  });
+
   return {
     ...result,
     stats: Array.isArray(result.stats) ? result.stats : [],
