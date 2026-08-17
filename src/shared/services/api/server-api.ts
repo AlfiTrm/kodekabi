@@ -45,6 +45,11 @@ export async function serverApiWithMeta<TResponse, TBody = never>(path: string, 
       throw new ApiError("Server terlalu lama merespons. Coba lagi.", 408, "REQUEST_TIMEOUT");
     }
 
+    console.error("[server-api] request failed", {
+      method: requestInit.method ?? "GET",
+      path: normalizedPath,
+      error,
+    });
     throw new ApiError("Tidak dapat terhubung ke server.", 503, "NETWORK_ERROR");
   }
 
@@ -52,6 +57,13 @@ export async function serverApiWithMeta<TResponse, TBody = never>(path: string, 
 
   if (!response.ok) {
     const errorPayload = payload as ErrorPayload | null;
+    console.error("[server-api] non-success response", {
+      method: requestInit.method ?? "GET",
+      path: normalizedPath,
+      status: response.status,
+      message: errorPayload?.message,
+      code: errorPayload?.code,
+    });
     throw new ApiError(errorPayload?.message ?? "Permintaan gagal diproses.", response.status, errorPayload?.code);
   }
 

@@ -158,7 +158,7 @@ export function GameplayWorkspace({ sessionId, initialData }: GameplayWorkspaceP
 }
 
 function EvidenceCanvas({ evidence, pending }: { evidence: GameplayEvidence | null; pending: boolean }) {
-  if (!evidence) return <section className="grid place-items-center p-8 text-center text-sm text-foreground/40">Pilih bukti untuk memulai penyelidikan.</section>;
+  if (!evidence) return <section className="grid min-h-[calc(100vh-4rem)] place-items-center p-8 text-center text-sm text-foreground/40">Pilih bukti untuk memulai penyelidikan.</section>;
   const details = evidence[evidence.template_type] as Record<string, unknown> | undefined;
   const imageUrl = typeof details?.image_url === "string" ? getTrustedImageUrl(details.image_url) : null;
   const headline = typeof details?.headline === "string" ? details.headline : evidence.label;

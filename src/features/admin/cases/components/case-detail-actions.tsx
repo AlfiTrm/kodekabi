@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, type ChangeEvent } from "react";
 
 import { Modal } from "@/src/shared/components/ui/modal";
 import { deleteAdminCaseAction } from "../actions/delete-admin-case-action";
@@ -19,6 +19,19 @@ export function CaseDetailActions({ caseItem }: { caseItem: AdminCase }) {
   const [updateState, updateFormAction, updatePending] = useActionState(updateAdminCaseAction, { error: null });
   const [editOpen, setEditOpen] = useState(false);
   const published = caseItem.status === "published";
+  const handleThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const input = event.currentTarget;
+    if (file && file.size > 1024 * 1024) {
+      input.value = "";
+      input.setCustomValidity("Ukuran thumbnail maksimal 1MB.");
+      input.reportValidity();
+      input.setCustomValidity("");
+      return;
+    }
+
+    input.setCustomValidity("");
+  };
 
   return (
     <>
@@ -93,7 +106,7 @@ export function CaseDetailActions({ caseItem }: { caseItem: AdminCase }) {
               <label className="text-xs font-semibold">Minimum Level<input name="minimum_level" type="number" min="0" defaultValue={caseItem.minimum_level} required className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-3 text-xs" /></label>
               <label className="text-xs font-semibold">Minimum Reputation<input name="minimum_reputation" type="number" min="0" defaultValue={caseItem.minimum_reputation} required className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-3 text-xs" /></label>
               <label className="text-xs font-semibold sm:col-span-2">Thumbnail Prompt<textarea name="thumbnail_prompt" defaultValue={caseItem.thumbnail_prompt} className="mt-2 min-h-16 w-full rounded-xl border border-border bg-background px-3 py-3 text-xs" /></label>
-              <label className="text-xs font-semibold sm:col-span-2">Thumbnail Baru<span className="mt-2 block text-[10px] font-normal text-foreground/45">Opsional. Kosongkan jika tidak mengganti thumbnail.</span><input name="thumbnail" type="file" accept="image/png,image/jpeg" className="mt-2 block w-full rounded-xl border border-dashed border-border-strong p-3 text-xs" /></label>
+              <label className="text-xs font-semibold sm:col-span-2">Thumbnail Baru<span className="mt-2 block text-[10px] font-normal text-foreground/45">Opsional. PNG/JPG maksimal 1MB. Kosongkan jika tidak mengganti thumbnail.</span><input name="thumbnail" type="file" accept="image/png,image/jpeg" onChange={handleThumbnailChange} className="mt-2 block w-full rounded-xl border border-dashed border-border-strong p-3 text-xs" /></label>
             </div>
             {updateState.error ? <p role="alert" className="mt-5 rounded-xl border border-red/25 bg-red/8 px-4 py-3 text-xs text-red">{updateState.error}</p> : null}
             <div className="mt-7 flex justify-end gap-3"><button type="button" onClick={() => setEditOpen(false)} disabled={updatePending} className="h-10 rounded-full border border-border-strong px-5 text-xs text-foreground/55">Batal</button><button type="submit" disabled={updatePending} className="h-10 rounded-full bg-purple px-6 text-xs font-semibold text-white disabled:opacity-50">{updatePending ? "Menyimpan..." : "Simpan Metadata"}</button></div>

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { serverApi } from "@/src/shared/services/api/server-api";
-import type { AdminCaseDetailResponse, AdminCaseEvidenceDetail, AdminCaseEvidenceDetailResponse, AdminCaseEvidencesResponse, AdminCaseLookups, AdminCaseQuestionsResponse, AdminCasesQuery, AdminCasesResponse, AdminQuestionDetailResponse, AdminQuestionEvidenceOptionsResponse, AdminQuestionType, CreateAdminCaseResponse, CreateAdminEvidenceResponse, CreateAdminQuestionResponse, DeleteAdminCaseResponse, DeleteAdminEvidenceResponse, DeleteAdminQuestionResponse, EvidenceTemplateType, PublishAdminCaseResponse, AdminCase } from "../types/admin-case";
+import type { AdminCaseDetailResponse, AdminCaseEvidenceDetail, AdminCaseEvidenceDetailResponse, AdminCaseEvidencesResponse, AdminCaseLookups, AdminCaseQuestionsResponse, AdminCasesQuery, AdminCasesResponse, AdminQuestionDetailResponse, AdminQuestionEvidenceOptionsResponse, AdminQuestionType, CreateAdminCaseResponse, CreateAdminEvidenceResponse, CreateAdminQuestionResponse, DeleteAdminCaseResponse, DeleteAdminEvidenceResponse, DeleteAdminQuestionResponse, EvidenceTemplateType, PublishAdminCaseResponse, UpdateAdminCaseResponse } from "../types/admin-case";
 
 export async function getAdminCases(query: AdminCasesQuery, accessToken: string) {
   const searchParams = new URLSearchParams({
@@ -54,13 +54,15 @@ export function createAdminCase(payload: FormData, accessToken: string) {
   });
 }
 
-export function updateAdminCase(caseId: string, payload: FormData, accessToken: string) {
-  return serverApi<AdminCase, FormData>(`/admin/cases/${encodeURIComponent(caseId)}`, {
+export async function updateAdminCase(caseId: string, payload: FormData, accessToken: string) {
+  const result = await serverApi<UpdateAdminCaseResponse, FormData>(`/admin/cases/${encodeURIComponent(caseId)}`, {
     method: "PATCH",
     body: payload,
     headers: { Authorization: `Bearer ${accessToken}` },
     timeoutMs: 30_000,
   });
+
+  return "case" in result ? result.case : result;
 }
 
 export function deleteAdminCase(caseId: string, accessToken: string) {

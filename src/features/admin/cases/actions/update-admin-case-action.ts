@@ -10,7 +10,7 @@ import { updateAdminCase } from "../services/admin-cases-service";
 import type { UpdateAdminCaseActionState } from "../types/admin-case";
 
 const allowedThumbnailTypes = new Set(["image/jpeg", "image/png"]);
-const maxThumbnailSize = 5 * 1024 * 1024;
+const maxThumbnailSize = 1 * 1024 * 1024;
 
 function text(formData: FormData, name: string) {
   return String(formData.get(name) ?? "").trim();
@@ -34,7 +34,7 @@ export async function updateAdminCaseAction(_state: UpdateAdminCaseActionState, 
   const thumbnail = formData.get("thumbnail");
   if (thumbnail instanceof File && thumbnail.size > 0) {
     if (!allowedThumbnailTypes.has(thumbnail.type)) return { error: "Thumbnail harus berformat PNG atau JPG." };
-    if (thumbnail.size > maxThumbnailSize) return { error: "Ukuran thumbnail maksimal 5MB." };
+    if (thumbnail.size > maxThumbnailSize) return { error: "Ukuran thumbnail maksimal 1MB." };
   }
 
   const payload = new FormData();
@@ -50,14 +50,21 @@ export async function updateAdminCaseAction(_state: UpdateAdminCaseActionState, 
   const accessToken = (await cookies()).get(ADMIN_ACCESS_COOKIE)?.value;
   if (!accessToken) redirect("/admin/login");
 
+  let updatedCase: Awaited<ReturnType<typeof updateAdminCase>>;
   try {
-    await updateAdminCase(caseId, payload, accessToken);
+    updatedCase = await updateAdminCase(caseId, payload, accessToken);
+    if (!updatedCase || typeof updatedCase.slug !== "string" || !updatedCase.slug) {
+      console.error("[admin-case] update returned an invalid case payload", { caseId });
+      return { error: "Server mengembalikan data case yang tidak lengkap." };
+    }
     revalidatePath("/admin/cases");
     revalidatePath(`/admin/cases/${caseSlug}`);
+    revalidatePath(`/admin/cases/${updatedCase.slug}`);
   } catch (error) {
     if (error instanceof ApiError) return { error: error.message };
+    console.error("[admin-case] metadata update failed", { caseId, error });
     return { error: "Metadata case gagal diperbarui. Coba lagi." };
   }
 
-  redirect(`/admin/cases/${encodeURIComponent(caseSlug)}?caseId=${encodeURIComponent(caseId)}`);
+  redirect(`/admin/cases/${encodeURIComponent(updatedCase.slug)}?caseId=${encodeURIComponent(caseId)}`);
 }

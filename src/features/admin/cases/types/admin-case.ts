@@ -87,6 +87,8 @@ export type UpdateAdminCaseActionState = {
   error: string | null;
 };
 
+export type UpdateAdminCaseResponse = AdminCase | { case: AdminCase };
+
 export type DeleteAdminCaseResponse = {
   case_id: string;
 };
