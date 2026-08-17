@@ -7,6 +7,7 @@ export async function loginAdmin(credentials: AdminLoginRequest) {
   const response = await serverApiWithMeta<AdminLoginResponse, AdminLoginRequest>("/auth/login", {
     method: "POST",
     body: credentials,
+    timeoutMs: 60_000,
   });
 
   const headerSessionToken = response.headers.get("x-session-token");

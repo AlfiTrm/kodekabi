@@ -83,6 +83,10 @@ export type CreateAdminCaseActionState = {
   error: string | null;
 };
 
+export type UpdateAdminCaseActionState = {
+  error: string | null;
+};
+
 export type DeleteAdminCaseResponse = {
   case_id: string;
 };

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 
 import { ConfirmationModal } from "@/src/shared/components/ui/confirmation-modal";
+import { getTrustedImageUrl } from "../../_shared/utils/remote-media";
 import { GameplayHeader } from "./gameplay-header";
 import { GameplayEvidenceSidebar } from "./gameplay-evidence-sidebar";
 import { GameplayInteractionSidebar } from "./gameplay-interaction-sidebar";
@@ -28,7 +29,7 @@ export function GameplayWorkspace({ sessionId, initialData }: GameplayWorkspaceP
   const [answers, setAnswers] = useState<AnswerMap>(() => Object.fromEntries(
     (initialData.answers ?? []).map((answer) => [answer.case_question_id, answer]),
   ));
-  const [interrogationHistory, setInterrogationHistory] = useState<Array<{sender: "user" | "assistant"; text: string}>>([]);
+  const [interrogationHistory, setInterrogationHistory] = useState<Array<{ sender: "user" | "assistant"; text: string }>>([]);
   const [decisionOpen, setDecisionOpen] = useState(false);
   const [submitResult, setSubmitResult] = useState<SubmitGameplayResponse | null>(null);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
@@ -159,7 +160,28 @@ export function GameplayWorkspace({ sessionId, initialData }: GameplayWorkspaceP
 function EvidenceCanvas({ evidence, pending }: { evidence: GameplayEvidence | null; pending: boolean }) {
   if (!evidence) return <section className="grid place-items-center p-8 text-center text-sm text-foreground/40">Pilih bukti untuk memulai penyelidikan.</section>;
   const details = evidence[evidence.template_type] as Record<string, unknown> | undefined;
-  return <section className="min-w-0 p-5 sm:p-8"><div className="mb-5 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/40"><span>{evidence.code} · {evidence.template_type}</span><span>{pending ? "Menyimpan..." : evidence.opened ? "Terbuka" : "Belum dibuka"}</span></div><article className="mx-auto max-w-2xl rounded-3xl border border-border bg-surface p-6 sm:p-10"><p className="font-mono text-[9px] uppercase tracking-[0.1em] text-purple">Evidence file</p><h2 className="mt-3 font-display text-3xl font-bold leading-tight">{evidence.label}</h2>{details ? <div className="mt-8 space-y-5 text-sm leading-relaxed text-foreground/70">{Object.entries(details).filter(([key]) => !["image_url", "posts", "messages", "participants"].includes(key)).map(([key, value]) => <div key={key}><dt className="font-mono text-[9px] uppercase tracking-[0.08em] text-foreground/35">{key.replaceAll("_", " ")}</dt><dd className="mt-1">{String(value)}</dd></div>)}</div> : <p className="mt-8 text-sm text-foreground/45">Detail evidence belum tersedia.</p>}</article></section>;
+  const imageUrl = typeof details?.image_url === "string" ? getTrustedImageUrl(details.image_url) : null;
+  const headline = typeof details?.headline === "string" ? details.headline : evidence.label;
+  const bodyText = typeof details?.body_text === "string" ? details.body_text : null;
+  const sourceName = typeof details?.source_name === "string" ? details.source_name : null;
+  const authorName = typeof details?.author_name === "string" ? details.author_name : null;
+  const publishDate = typeof details?.publish_date === "string" ? details.publish_date : null;
+
+  return <section className="min-w-0 p-5 sm:p-8"><div className="mb-5 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/40"><span>{evidence.code} · {evidence.template_type}</span><span>{pending ? "Menyimpan..." : evidence.opened ? "Terbuka" : "Belum dibuka"}</span></div><article className={`evidence-paper mx-auto max-w-3xl p-5 sm:p-9 ${evidence.template_type === "article" ? "evidence-newspaper" : ""}`}><header className="border-b-2 border-[#1b1d24]/80 pb-5"><div className="flex items-center justify-between gap-4 border-b border-[#1b1d24]/20 pb-3 font-mono text-[9px] uppercase tracking-[0.12em] text-[#606676]"><span>{evidence.template_type === "article" ? "Edisi investigasi" : `Bukti ${evidence.template_type.replaceAll("_", " ")}`}</span><span>{publishDate ? formatEvidenceDate(publishDate) : evidence.code}</span></div><div className="mt-5 flex items-end justify-between gap-4"><h2 className="font-display text-3xl font-black uppercase leading-[0.95] tracking-[-0.04em] text-[#171922] sm:text-5xl">{evidence.template_type === "article" ? "Koran Nusa" : "Berkas Bukti"}<span className="text-red">.</span></h2><span className="hidden font-mono text-[9px] uppercase text-[#606676] sm:block">{evidence.code}</span></div></header>{evidence.template_type === "article" ? <div className="pt-6"><h3 className="max-w-2xl font-display text-3xl font-black leading-[0.98] tracking-[-0.03em] text-[#171922] sm:text-5xl">{headline}</h3><p className="mt-4 text-xs text-[#606676]">{sourceName ?? "Redaksi Nusa"} · Ditulis oleh <strong className="text-[#171922]">{authorName ?? "Redaksi"}</strong>{publishDate ? ` · ${formatEvidenceDate(publishDate)}` : ""}</p>{imageUrl ? <div className="relative mt-7 aspect-[16/7] overflow-hidden rounded-xl bg-[#e9ebee]"><Image src={imageUrl} alt="Ilustrasi artikel evidence" fill sizes="(max-width: 768px) 100vw, 640px" className="object-cover grayscale-[20%]" /></div> : <div className="mt-7 grid min-h-28 place-items-center rounded-xl bg-[#e9ebee] px-6 text-center font-mono text-xs text-[#606676]">[ FOTO DAN DOKUMEN PENDUKUNG ]</div>}{bodyText ? <div className="mt-7 space-y-4 text-[15px] leading-7 text-[#30333d]"><p>{bodyText}</p></div> : null}</div> : <div className="pt-6"><p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#606676]">Evidence file · {evidence.label}</p>{imageUrl ? <div className="relative mt-6 aspect-[16/8] overflow-hidden rounded-xl bg-[#e9ebee]"><Image src={imageUrl} alt="Lampiran evidence" fill sizes="(max-width: 768px) 100vw, 640px" className="object-contain" /></div> : null}{details ? <dl className="mt-7 grid gap-5 text-sm leading-relaxed text-[#30333d] sm:grid-cols-2">{Object.entries(details).filter(([key]) => !["image_url", "posts", "messages", "participants"].includes(key)).map(([key, value]) => <div key={key} className="border-t border-[#1b1d24]/15 pt-3"><dt className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#606676]">{key.replaceAll("_", " ")}</dt><dd className="mt-1">{formatEvidenceValue(key, value)}</dd></div>)}</dl> : <p className="mt-8 text-sm text-[#606676]">Detail evidence belum tersedia.</p>}</div>}</article></section>;
+}
+
+function formatEvidenceDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "long", year: "numeric" }).format(date);
+}
+
+function formatEvidenceValue(key: string, value: unknown) {
+  if (["date", "publish_date", "announcement_date", "timestamp"].includes(key) && typeof value === "string") {
+    return formatEvidenceDate(value);
+  }
+
+  return String(value);
 }
 
 function QuestionPanel({ questions, answers, pending, onAnswer }: { questions: GameplayQuestion[]; answers: AnswerMap; pending: boolean; onAnswer: (answer: GameplayAnswer) => void }) {
@@ -170,28 +192,28 @@ function QuestionPanel({ questions, answers, pending, onAnswer }: { questions: G
       <p className="text-xs font-semibold">{index + 1} · {question.question_text}</p>
       {question.question_type === "mcq" ? <div className="mt-3 space-y-2">{((question.options as { option_code: string; option_text: string }[] | undefined) ?? []).map((option) => { const selected = value.option_code === option.option_code; return <button key={option.option_code} type="button" disabled={pending} onClick={() => onAnswer({ case_question_id: question.case_question_id, question_type: question.question_type, value: { option_code: option.option_code }, is_final: true })} className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-[10px] transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${selected ? "border-purple bg-purple/10 text-foreground" : "border-border bg-surface text-foreground/60 hover:border-purple"}`}><span className={`grid size-5 place-items-center rounded-md font-mono text-[9px] ${selected ? "bg-purple text-white" : "bg-surface-muted"}`}>{option.option_code}</span>{option.option_text}</button>; })}</div>
         : question.question_type === "confidence_slider" ? <input type="range" min="0" max="100" step="5" value={Number(value.confidence ?? 50)} disabled={pending} onChange={(event) => { const confidence = Number(event.target.value); onAnswer({ case_question_id: question.case_question_id, question_type: question.question_type, value: { confidence }, confidence_final: confidence, is_final: true }); }} className="mt-3 w-full accent-purple disabled:cursor-not-allowed disabled:opacity-60" />
-        : question.question_type === "claim_classification" ? <div className="mt-3 flex flex-wrap gap-2">{((question.claim_classification as string[] | undefined) ?? []).map((classification) => <button key={classification} type="button" disabled={pending} onClick={() => onAnswer({ case_question_id: question.case_question_id, question_type: question.question_type, value: { classification }, is_final: true })} className={`rounded-full border px-3 py-2 text-[10px] disabled:cursor-not-allowed disabled:opacity-60 ${value.classification === classification ? "border-blue bg-blue/10 text-blue" : "border-border text-foreground/55"}`}>{classification}</button>)}</div>
-        : <textarea value={String(value.text ?? "")} disabled={pending} onChange={(event) => onAnswer({ case_question_id: question.case_question_id, question_type: question.question_type, value: { text: event.target.value }, is_final: true })} placeholder="Tulis jawabanmu di sini" className="mt-3 min-h-20 w-full resize-y rounded-xl border border-border bg-surface px-3 py-3 text-xs outline-none focus:border-purple disabled:cursor-not-allowed disabled:opacity-60" />}
+          : question.question_type === "claim_classification" ? <div className="mt-3 flex flex-wrap gap-2">{((question.claim_classification as string[] | undefined) ?? []).map((classification) => <button key={classification} type="button" disabled={pending} onClick={() => onAnswer({ case_question_id: question.case_question_id, question_type: question.question_type, value: { classification }, is_final: true })} className={`rounded-full border px-3 py-2 text-[10px] disabled:cursor-not-allowed disabled:opacity-60 ${value.classification === classification ? "border-blue bg-blue/10 text-blue" : "border-border text-foreground/55"}`}>{classification}</button>)}</div>
+            : <textarea value={String(value.text ?? "")} disabled={pending} onChange={(event) => onAnswer({ case_question_id: question.case_question_id, question_type: question.question_type, value: { text: event.target.value }, is_final: true })} placeholder="Tulis jawabanmu di sini" className="mt-3 min-h-20 w-full resize-y rounded-xl border border-border bg-surface px-3 py-3 text-xs outline-none focus:border-purple disabled:cursor-not-allowed disabled:opacity-60" />}
     </div>;
   })}</div>;
 }
 
 import { chatInterrogationAction } from "../actions/chat-interrogation-action";
 
-function InterrogationPanel({ caseCtx, chatbotConfig, history, setHistory }: { caseCtx: import("../types/gameplay").GameplayCase; chatbotConfig: import("../types/gameplay").GameplayChatbotConfig | null; history: Array<{sender: "user"|"assistant", text: string}>; setHistory: (history: Array<{sender: "user"|"assistant", text: string}>) => void; }) {
+function InterrogationPanel({ caseCtx, chatbotConfig, history, setHistory }: { caseCtx: import("../types/gameplay").GameplayCase; chatbotConfig: import("../types/gameplay").GameplayChatbotConfig | null; history: Array<{ sender: "user" | "assistant", text: string }>; setHistory: (history: Array<{ sender: "user" | "assistant", text: string }>) => void; }) {
   const [draft, setDraft] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
   const characterName = chatbotConfig?.bot_name || "Saksi / Korban";
   const avatarUrl = "";
   const quickPrompts = chatbotConfig?.suggested_questions || [];
-  
+
   const messages = history.length > 0 ? history : ([]);
 
   async function sendMessage(message: string) {
     const trimmedMessage = message.trim();
     if (!trimmedMessage || !chatbotConfig || isTyping) return;
-    
+
     // Optimistic update
     const newHistory = [...messages, { sender: "user" as const, text: trimmedMessage }];
     setHistory(newHistory);
@@ -199,7 +221,7 @@ function InterrogationPanel({ caseCtx, chatbotConfig, history, setHistory }: { c
     setIsTyping(true);
 
     const result = await chatInterrogationAction(chatbotConfig, caseCtx, messages, trimmedMessage);
-    
+
     setIsTyping(false);
     if (result.success && result.text) {
       setHistory([...newHistory, { sender: "assistant" as const, text: result.text }]);
