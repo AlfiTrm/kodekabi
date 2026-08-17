@@ -3,6 +3,7 @@ export const adminNavigation = [
   { label: "Users", href: "/admin/users", icon: "users" },
   { label: "Case CMS", href: "/admin/cases", icon: "cases" },
   { label: "Shop & Redeem", href: "/admin/shop", icon: "shop" },
+  { label: "Titles", href: "/admin/titles", icon: "titles" },
   // { label: "Moderation", href: "/admin/moderation", icon: "moderation" },
   { label: "Game Config", href: "/admin/config", icon: "config" },
   // { label: "Leaderboard", href: "/admin/leaderboard", icon: "leaderboard" },
