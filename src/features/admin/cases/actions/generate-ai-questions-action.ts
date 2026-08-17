@@ -4,30 +4,10 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { ADMIN_ACCESS_COOKIE } from "../../auth/constants/admin-auth";
-import { callQwenText } from "@/src/features/admin/ai-generation/services/alibaba-ai-service";
-import { createAdminCaseQuestion, getAdminCaseEvidences, getAdminCaseDetail, getAdminCaseChatbotConfig } from "../services/admin-cases-service";
+import { generateQuestionPayload, pickRandomQuestionType, questionTypeLabel } from "@/src/features/admin/ai-generation/services/question-generation-service";
+import { createAdminCaseQuestion, getAdminCaseEvidences, getAdminCaseEvidenceDetail, getAdminCaseDetail, getAdminCaseChatbotConfig } from "../services/admin-cases-service";
+import { formatEvidenceDetail } from "../utils/evidence-context";
 import { ApiError } from "@/src/shared/services/api/api-error";
-
-const SYSTEM_PROMPT = `Kamu membantu tim pembuat skenario game investigasi merancang pertanyaan pilihan ganda (MCQ).
-TUGASMU:
-Hasilkan 3-5 pertanyaan pilihan ganda (MCQ) yang menguji pemahaman pemain tentang sebuah kasus investigasi.
-Output HARUS JSON valid dengan struktur:
-{
-  "questions": [
-    {
-      "question_text": "Teks pertanyaan (fokus pada mengidentifikasi kebohongan/fakta kasus)",
-      "explanation": "Penjelasan mengapa jawaban tersebut benar",
-      "options": [
-        { "option_code": "A", "option_text": "Pilihan A", "is_correct": true },
-        { "option_code": "B", "option_text": "Pilihan B", "is_correct": false },
-        { "option_code": "C", "option_text": "Pilihan C", "is_correct": false },
-        { "option_code": "D", "option_text": "Pilihan D", "is_correct": false }
-      ]
-    }
-  ]
-}
-Pastikan hanya ada satu jawaban benar per pertanyaan (is_correct: true).
-Dilarang menggunakan entitas nyata, semua nama/tempat harus fiktif di dalam "Kota Nusa".`;
 
 export async function generateAiQuestionsAction(caseId: string, caseSlug: string, versionId: string) {
   const cookieStore = await cookies();
@@ -37,25 +17,37 @@ export async function generateAiQuestionsAction(caseId: string, caseSlug: string
   }
 
   try {
-    // Fetch context
+    // 1. Ambil konteks kasus untuk diserahkan ke AI.
     const [detailRes, evidencesRes, chatbotRes] = await Promise.allSettled([
       getAdminCaseDetail(caseId, accessToken),
       getAdminCaseEvidences(caseId, accessToken),
-      getAdminCaseChatbotConfig(caseId, accessToken)
+      getAdminCaseChatbotConfig(caseId, accessToken),
     ]);
 
     if (detailRes.status === "rejected") throw new Error("Gagal mengambil detail kasus.");
-    
+
     const caseItem = detailRes.value.case;
     const evidences = evidencesRes.status === "fulfilled" ? evidencesRes.value.evidences : [];
-    
-    // Extract context for AI
+
     if (!evidences || evidences.length === 0) {
       return { error: "Tidak ada evidence yang tersedia. Pastikan tab Evidence sudah terisi terlebih dahulu sebelum melakukan generate questions." };
     }
-    
-    const evidenceContext = evidences.map(e => `- ${e.label} (Tipe: ${e.template_type})`).join("\\n");
-      
+
+    const evidenceDetails = await Promise.all(
+      evidences.map((evidence) =>
+        getAdminCaseEvidenceDetail(caseId, versionId, evidence.case_evidence_id, accessToken)
+          .then((result) => result.evidence)
+          .catch(() => null),
+      ),
+    );
+
+    const evidenceContext = evidences
+      .map((evidence, index) => {
+        const detail = evidenceDetails[index];
+        return `Evidence ${index + 1}:\n${detail ? formatEvidenceDetail(detail) : `- ${evidence.label} (Tipe: ${evidence.template_type})`}`;
+      })
+      .join("\n\n");
+
     let chatbotContext = "";
     if (chatbotRes.status === "fulfilled" && chatbotRes.value) {
       const bot = Array.isArray(chatbotRes.value) ? chatbotRes.value[0] : chatbotRes.value;
@@ -64,47 +56,31 @@ export async function generateAiQuestionsAction(caseId: string, caseSlug: string
       }
     }
 
-    const taskPrompt = `Buatkan 3-5 pertanyaan MCQ untuk kasus ini:
-Judul: ${caseItem.title}
-Deskripsi Singkat: ${caseItem.short_description}
-${chatbotContext ? "\\n" + chatbotContext : ""}
-Evidence yang tersedia:
-${evidenceContext}`;
+    // 2. Pilih jenis pertanyaan secara acak.
+    const questionType = pickRandomQuestionType();
 
-    // Call AI
-    const rawJson = await callQwenText([
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: taskPrompt },
-    ]);
+    // 3. Kirim jenis yang terpilih ke AI (Qwen/Alibaba) untuk menghasilkan pertanyaan.
+    const generated = await generateQuestionPayload(questionType, {
+      title: caseItem.title,
+      short_description: caseItem.short_description,
+      chatbotContext,
+      evidenceContext,
+    });
 
-    const result = JSON.parse(rawJson);
-    if (!result.questions || !Array.isArray(result.questions) || result.questions.length === 0) {
-      throw new Error("AI mengembalikan format yang tidak valid.");
-    }
+    // 4. Lengkapi field umum lalu simpan ke backend.
+    const defaultEvidenceIds = [evidences[0].case_evidence_id];
+    const payload = {
+      ...generated.payload,
+      scoring_weight: 20,
+      related_evidence_ids: defaultEvidenceIds,
+      is_required: true,
+      sort_order: 1,
+    };
 
-    // Default to mapping to first evidence if available, otherwise empty array
-    const defaultEvidenceIds = evidences && evidences.length > 0 ? [evidences[0].case_evidence_id] : [];
-
-    // Save to DB
-    let successCount = 0;
-    for (let i = 0; i < result.questions.length; i++) {
-      const q = result.questions[i];
-      const payload = {
-        question_text: q.question_text,
-        explanation: q.explanation || "Penjelasan otomatis AI",
-        scoring_weight: 20, // default equal weight
-        is_required: true,
-        sort_order: i + 1,
-        related_evidence_ids: defaultEvidenceIds,
-        options: q.options
-      };
-
-      await createAdminCaseQuestion(caseId, versionId, "mcq", payload, accessToken);
-      successCount++;
-    }
+    await createAdminCaseQuestion(caseId, versionId, questionType, payload, accessToken);
 
     revalidatePath(`/admin/cases/${caseSlug}`);
-    return { success: true, count: successCount };
+    return { success: true, count: 1, type: questionTypeLabel(questionType) };
   } catch (error) {
     if (error instanceof ApiError) return { error: error.message };
     return { error: error instanceof Error ? error.message : "Terjadi kesalahan saat memanggil AI." };
