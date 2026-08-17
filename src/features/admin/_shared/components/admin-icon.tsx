@@ -1,4 +1,4 @@
-type AdminIconName = "dashboard" | "users" | "cases" | "shop" | "moderation" | "config" | "leaderboard" | "audit" | "reports" | "search" | "menu" | "close" | "view" | "edit" | "delete";
+type AdminIconName = "dashboard" | "users" | "cases" | "shop" | "titles" | "moderation" | "config" | "leaderboard" | "audit" | "reports" | "search" | "menu" | "close" | "view" | "edit" | "delete";
 
 type AdminIconProps = {
   name: AdminIconName;
@@ -10,6 +10,7 @@ const paths: Record<AdminIconName, ReactNode> = {
   users: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></>,
   cases: <><path d="M3 7h6l2 2h10v10H3z" /><path d="M3 7V5h7l2 2" /></>,
   shop: <><circle cx="9" cy="20" r="1" /><circle cx="19" cy="20" r="1" /><path d="M3 4h2l2.4 10.5a2 2 0 0 0 2 1.5h8.8a2 2 0 0 0 2-1.6L22 8H7" /></>,
+  titles: <><circle cx="12" cy="8" r="5" /><path d="m8.5 12.5-1 8 4.5-2.5 4.5 2.5-1-8" /></>,
   moderation: <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="M12 8v5M12 17h.01" /></>,
   config: <><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3" /><path d="M1 14h6M9 8h6M17 16h6" /></>,
   leaderboard: <><path d="M5 21v-6M12 21V9M19 21V3" /></>,
